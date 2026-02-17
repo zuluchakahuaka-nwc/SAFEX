@@ -55,3 +55,19 @@ secrets/
 
 # Docker
 .dockerignore
+
+# Project-specific
+logs/
+reports/
+data/
+data/*
+!data/.gitkeep
+.ruff_cache/
+
+# Weird folders
+-p/
+
+# Build artifacts
+*.egg-info/
+dist/
+build/
