@@ -1,0 +1,130 @@
+{
+  "VULN-001": {
+    "vulnerability_id": "VULN-001",
+    "steps": [
+      {
+        "type": "file_edit",
+        "description": "Replace hardcoded password with environment variable",
+        "replacements": [
+          {
+            "old": "password = 'mysecretpassword'",
+            "new": "password = os.environ.get('DB_PASSWORD')"
+          }
+        ]
+      }
+    ],
+    "verification": "Verify that password is loaded from environment variables"
+  },
+  "VULN-002": {
+    "vulnerability_id": "VULN-002",
+    "steps": [
+      {
+        "type": "file_edit",
+        "description": "Replace string concatenation with parameterized query",
+        "replacements": [
+          {
+            "old": "cursor.execute(\"SELECT * FROM users WHERE id = \" + user_id)",
+            "new": "cursor.execute(\"SELECT * FROM users WHERE id = %s\", (user_id,))"
+          }
+        ]
+      }
+    ],
+    "verification": "Verify that all queries use parameterized input"
+  },
+  "VULN-003": {
+    "vulnerability_id": "VULN-003",
+    "steps": [
+      {
+        "type": "file_edit",
+        "description": "Replace weak algorithm with strong one",
+        "replacements": [
+          {
+            "old": "algorithm = 'MD5'",
+            "new": "algorithm = 'SHA-256'"
+          }
+        ]
+      }
+    ],
+    "verification": "Verify that only strong algorithms are used"
+  },
+  "VULN-004": {
+    "vulnerability_id": "VULN-004",
+    "steps": [
+      {
+        "type": "file_edit",
+        "description": "Replace unsafe pickle with safe alternatives",
+        "replacements": [
+          {
+            "old": "pickle.loads(data)",
+            "new": "json.loads(data)"
+          }
+        ]
+      }
+    ],
+    "verification": "Verify that safe deserialization methods are used"
+  },
+  "VULN-005": {
+    "vulnerability_id": "VULN-005",
+    "steps": [
+      {
+        "type": "file_edit",
+        "description": "Remove shell=True from subprocess calls",
+        "replacements": [
+          {
+            "old": "subprocess.call(cmd, shell=True)",
+            "new": "subprocess.call(cmd.split())"
+          }
+        ]
+      }
+    ],
+    "verification": "Verify that shell=True is not used with user input"
+  },
+  "VULN-006": {
+    "vulnerability_id": "VULN-006",
+    "steps": [
+      {
+        "type": "file_edit",
+        "description": "Sanitize user input before inserting into DOM",
+        "replacements": [
+          {
+            "old": "element.innerHTML = userInput",
+            "new": "element.textContent = userInput"
+          }
+        ]
+      }
+    ],
+    "verification": "Verify that all user input is sanitized"
+  },
+  "VULN-007": {
+    "vulnerability_id": "VULN-007",
+    "steps": [
+      {
+        "type": "permission_change",
+        "description": "Restrict file permissions",
+        "permissions": "600"
+      }
+    ],
+    "verification": "Verify that file permissions are restrictive"
+  },
+  "VULN-008": {
+    "vulnerability_id": "VULN-008",
+    "steps": [
+      {
+        "type": "file_edit",
+        "description": "Replace exposed secret with environment variable",
+        "replacements": [
+          {
+            "old": "api_key = 'sk-1234567890abcdef'",
+            "new": "api_key = os.environ.get('API_KEY')"
+          }
+        ]
+      },
+      {
+        "type": "command",
+        "description": "Rotate the exposed secret in your service",
+        "command": "echo 'Rotate secret immediately'"
+      }
+    ],
+    "verification": "Verify that secret is rotated and no longer exposed"
+  }
+}

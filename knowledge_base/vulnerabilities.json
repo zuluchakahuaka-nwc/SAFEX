@@ -1,0 +1,66 @@
+{
+  "VULN-001": {
+    "id": "VULN-001",
+    "name": "Hardcoded Password",
+    "severity": "CRITICAL",
+    "description": "A hardcoded password was found in the codebase",
+    "cwe": "CWE-798",
+    "remediation": "Use environment variables or secure configuration management"
+  },
+  "VULN-002": {
+    "id": "VULN-002",
+    "name": "SQL Injection",
+    "severity": "HIGH",
+    "description": "Potential SQL injection vulnerability via string concatenation",
+    "cwe": "CWE-89",
+    "remediation": "Use parameterized queries"
+  },
+  "VULN-003": {
+    "id": "VULN-003",
+    "name": "Weak Cryptographic Algorithm",
+    "severity": "HIGH",
+    "description": "Weak cryptographic algorithm detected",
+    "cwe": "CWE-327",
+    "remediation": "Use strong algorithms like AES-256, SHA-256"
+  },
+  "VULN-004": {
+    "id": "VULN-004",
+    "name": "Insecure Deserialization",
+    "severity": "HIGH",
+    "description": "Unsafe deserialization detected",
+    "cwe": "CWE-502",
+    "remediation": "Use safe deserialization methods"
+  },
+  "VULN-005": {
+    "id": "VULN-005",
+    "name": "Command Injection",
+    "severity": "CRITICAL",
+    "description": "Potential command injection vulnerability",
+    "cwe": "CWE-77",
+    "remediation": "Use proper subprocess calls without shell=True"
+  },
+  "VULN-006": {
+    "id": "VULN-006",
+    "name": "Cross-Site Scripting (XSS)",
+    "severity": "HIGH",
+    "description": "Potential XSS vulnerability",
+    "cwe": "CWE-79",
+    "remediation": "Sanitize and escape user input"
+  },
+  "VULN-007": {
+    "id": "VULN-007",
+    "name": "Insecure File Permissions",
+    "severity": "MEDIUM",
+    "description": "File has insecure permissions",
+    "cwe": "CWE-732",
+    "remediation": "Restrict file permissions to minimum required"
+  },
+  "VULN-008": {
+    "id": "VULN-008",
+    "name": "Exposed Secret",
+    "severity": "CRITICAL",
+    "description": "Potential API key or secret exposed",
+    "cwe": "CWE-798",
+    "remediation": "Rotate the secret and use secure configuration"
+  }
+}
