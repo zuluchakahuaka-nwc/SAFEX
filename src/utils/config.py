@@ -4,7 +4,7 @@ Configuration management for SAFEX
 
 import os
 from pathlib import Path
-from typing import List
+from typing import Dict, List
 from pydantic_settings import BaseSettings
 from pydantic import Field
 
@@ -36,6 +36,21 @@ class Settings(BaseSettings):
     temp_dir: Path = Field(
         default_factory=lambda: Path(__file__).parent.parent.parent / "data" / "temp"
     )
+    output_dir: str = Field(
+        default_factory=lambda: str(Path(__file__).parent.parent.parent / "output")
+    )
+    knowledge_base_path: str = Field(
+        default_factory=lambda: str(
+            Path(__file__).parent.parent.parent / "knowledge_base"
+        )
+    )
+
+    safety_levels: Dict[str, Dict[str, str]] = {
+        "discovery": {"name": "discovery", "description": "Read-only scanning"},
+        "safe": {"name": "safe", "description": "Non-destructive changes only"},
+        "moderate": {"name": "moderate", "description": "Destructive changes with warnings"},
+        "aggressive": {"name": "aggressive", "description": "All changes allowed"},
+    }
 
     # Database
     database_url: str = "postgresql://safex:safex_password@localhost:5432/safex_db"

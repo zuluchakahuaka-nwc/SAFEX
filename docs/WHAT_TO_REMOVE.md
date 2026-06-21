@@ -95,7 +95,7 @@ safex/
 ### Шаг 1: Проверь текущую структуру
 
 ```powershell
-cd D:\Projects\SAFEX
+cd D:\Projects\SAFEXerver
 dir /B
 ```
 
@@ -182,7 +182,7 @@ build/
 
 **Следующий шаг:**
 1. Открой GitHub Desktop
-2. Add Local Repository → `D:\Projects\SAFEX`
+2. Add Local Repository → `D:\Projects\SAFEXerver`
 3. Publish repository
 
 ---

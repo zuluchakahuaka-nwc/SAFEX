@@ -3,8 +3,18 @@ Main CLI for SAFEX
 """
 
 import sys
+import os
 import argparse
+from datetime import datetime
 from pathlib import Path
+
+if sys.platform == "win32":
+    os.environ.setdefault("PYTHONIOENCODING", "utf-8")
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
 
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -63,7 +73,7 @@ def main():
     scan_parser.add_argument("target", help="Target to scan")
     scan_parser.add_argument(
         "--scanner",
-        choices=["config", "code", "system", "vulnerability", "network", "web"],
+        choices=["config", "code", "system", "linux", "vulnerability", "network", "web", "bot"],
         default="auto",
     )
 
@@ -81,6 +91,48 @@ def main():
     list_parser = subparsers.add_parser("list", help="List items")
     list_parser.add_argument(
         "item", choices=["scanners", "tools", "languages"], help="Item to list"
+    )
+
+    # Bot security commands
+    bot_scan_parser = subparsers.add_parser(
+        "bot-scan", help="Scan bot project for security vulnerabilities"
+    )
+    bot_scan_parser.add_argument("target", help="Path to bot project directory")
+    bot_scan_parser.add_argument(
+        "--platform",
+        choices=["telegram", "discord", "slack", "vk", "viber", "whatsapp", "generic"],
+        default="telegram",
+        help="Bot platform",
+    )
+
+    bot_audit_parser = subparsers.add_parser(
+        "bot-audit", help="Generate security audit checklist for bot owners"
+    )
+    bot_audit_parser.add_argument(
+        "--platform",
+        choices=["telegram", "discord", "slack", "vk", "viber", "whatsapp", "generic"],
+        default="telegram",
+        help="Bot platform",
+    )
+    bot_audit_parser.add_argument(
+        "--text", action="store_true", help="Output as text report"
+    )
+    bot_audit_parser.add_argument("--output", help="Output file path")
+
+    bot_deploy_parser = subparsers.add_parser(
+        "bot-deploy", help="Generate secure Podman deployment templates"
+    )
+    bot_deploy_parser.add_argument(
+        "--platform",
+        choices=["telegram", "discord", "slack", "vk", "viber", "whatsapp", "generic"],
+        default="telegram",
+        help="Bot platform",
+    )
+    bot_deploy_parser.add_argument(
+        "--domain", default="bot.example.com", help="Webhook domain"
+    )
+    bot_deploy_parser.add_argument(
+        "--output-dir", default="./bot-deploy", help="Output directory for templates"
     )
 
     args = parser.parse_args()
@@ -107,6 +159,12 @@ def main():
             status_command(args, language)
         elif args.command == "list":
             list_command(args, language)
+        elif args.command == "bot-scan":
+            bot_scan_command(args, language)
+        elif args.command == "bot-audit":
+            bot_audit_command(args, language)
+        elif args.command == "bot-deploy":
+            bot_deploy_command(args, language)
         else:
             parser.print_help()
     except KeyboardInterrupt:
@@ -202,7 +260,7 @@ def report_command(args, language):
 
     test_data = {
         "report_type": "Security Report",
-        "generated_at": sm._get_timestamp() if "sm" in locals() else "",
+        "generated_at": datetime.utcnow().isoformat(),
         "findings": [],
     }
 
@@ -253,3 +311,88 @@ def list_command(args, language):
 
 if __name__ == "__main__":
     main()
+
+
+def bot_scan_command(args, language):
+    """Handle bot-scan command — scan bot project for security issues"""
+    from src.bots_security.bot_scanner import BotScanner
+    from src.bots_security.models import PlatformType
+
+    platform = PlatformType(args.platform)
+    logger.info(f"Scanning bot project: {args.target} (platform: {platform.value})")
+
+    scanner = BotScanner()
+    result = scanner.scan(args.target, options={"platform": platform.value})
+
+    if result["success"]:
+        passed = "PASSED" if result.get("passed", True) else "FAILED"
+        print(f"{'✅' if result.get('passed', True) else '❌'} Bot Security Scan [{passed}]")
+        print(f"   Platform: {result.get('platform', 'unknown')}")
+        print(f"   Risk Score: {result.get('risk_score', 0):.1f}/100")
+        print(f"   Total Findings: {result.get('total_findings', 0)}")
+        severity = result.get("severity_count", {})
+        for sev, count in severity.items():
+            print(f"   {sev}: {count}")
+        print()
+        for finding in result.get("findings", []):
+            print(f"   [{finding.get('risk_level', '?')}] {finding.get('title', '?')}")
+            if finding.get("location"):
+                print(f"      Location: {finding['location']}")
+            if finding.get("recommendation"):
+                print(f"      Fix: {finding['recommendation']}")
+            print()
+    else:
+        print(f"❌ Scan failed: {result.get('error', 'Unknown error')}")
+
+
+def bot_audit_command(args, language):
+    """Handle bot-audit command — generate security audit checklist"""
+    import json
+    from src.bots_security.audit_checklist import AuditChecklist
+    from src.bots_security.models import PlatformType
+
+    platform = PlatformType(args.platform)
+    audit = AuditChecklist()
+
+    if args.text:
+        report = audit.generate_text_report(platform)
+        if args.output:
+            Path(args.output).write_text(report, encoding="utf-8")
+            print(f"✅ Text report saved to: {args.output}")
+        else:
+            print(report)
+    else:
+        checklist = audit.generate_full_checklist(platform)
+        if args.output:
+            with open(args.output, "w", encoding="utf-8") as f:
+                json.dump(checklist, f, indent=2, ensure_ascii=False)
+            print(f"✅ Checklist saved to: {args.output}")
+        else:
+            print(json.dumps(checklist, indent=2, ensure_ascii=False))
+
+
+def bot_deploy_command(args, language):
+    """Handle bot-deploy command — generate Podman deployment templates"""
+    from src.bots_security.podman_templates import PodmanTemplates
+    from src.bots_security.models import PlatformType
+
+    platform = PlatformType(args.platform)
+    templates = PodmanTemplates()
+    all_templates = templates.generate_all(platform, args.domain)
+
+    output_dir = Path(args.output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    for relative_path, content in all_templates.items():
+        file_path = output_dir / relative_path
+        file_path.parent.mkdir(parents=True, exist_ok=True)
+        file_path.write_text(content, encoding="utf-8")
+        print(f"  Created: {file_path}")
+
+    print("\n✅ Deployment templates generated in: %s" % output_dir)
+    print("   Platform: %s" % platform.value)
+    print("   Next steps:")
+    print("     1. cd %s" % output_dir)
+    print("     2. Copy .env.example to .env and fill in real values")
+    print("     3. Add TLS certificates to nginx/certs/")
+    print("     4. podman-compose up -d")

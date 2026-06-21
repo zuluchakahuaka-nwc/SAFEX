@@ -24,7 +24,7 @@
 
 1. Открой **GitHub Desktop**
 2. **File** → **Add Local Repository...**
-3. Выбери: `D:\Projects\SAFEX`
+3. Выбери: `D:\Projects\SAFEXerver`
 4. Нажми **Add Repository**
 5. Нажми **Publish repository**
 6. Заполни и нажми **Publish**
@@ -34,7 +34,7 @@
 ### 3. Или через Git (если установлен)
 
 ```powershell
-cd D:\Projects\SAFEX
+cd D:\Projects\SAFEXerver
 
 git init
 git add .

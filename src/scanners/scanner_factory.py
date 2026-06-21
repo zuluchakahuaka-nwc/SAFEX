@@ -2,11 +2,12 @@
 Scanner Factory Module
 """
 
-from typing import Dict, Type
+from typing import Dict, List, Type
 from .base_scanner import BaseScanner
 from .config_scanner import ConfigScanner
 from .code_scanner import CodeScanner
 from .system_scanner import SystemScanner
+from .linux_server_scanner import LinuxServerScanner
 
 
 class ScannerFactory:
@@ -16,7 +17,18 @@ class ScannerFactory:
         "config": ConfigScanner,
         "code": CodeScanner,
         "system": SystemScanner,
+        "linux": LinuxServerScanner,
     }
+
+    @classmethod
+    def _lazy_import_bot_scanner(cls) -> Type[BaseScanner]:
+        from ..bots_security.bot_scanner import BotScanner
+        return BotScanner
+
+    @classmethod
+    def _ensure_bot_scanner(cls):
+        if "bot" not in cls._scanners:
+            cls._scanners["bot"] = cls._lazy_import_bot_scanner()
 
     @classmethod
     def create_scanner(cls, scanner_type: str) -> BaseScanner:
@@ -24,7 +36,7 @@ class ScannerFactory:
         Create a scanner instance
 
         Args:
-            scanner_type: Type of scanner (config, code, system)
+            scanner_type: Type of scanner (config, code, system, bot)
 
         Returns:
             Scanner instance
@@ -32,6 +44,9 @@ class ScannerFactory:
         Raises:
             ValueError: If scanner type is not found
         """
+        if scanner_type == "bot":
+            cls._ensure_bot_scanner()
+
         if scanner_type not in cls._scanners:
             available = ", ".join(cls._scanners.keys())
             raise ValueError(

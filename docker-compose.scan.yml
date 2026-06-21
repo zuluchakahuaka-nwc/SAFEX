@@ -1,0 +1,121 @@
+# Docker Compose: SAFEX + Test Target
+# 2 контейнера: SAFEX для сканирования и тестовый сервер с уязвимостями
+
+version: '3.8'
+
+services:
+  # ============================================
+  # 🐳 SAFEX (Утилита для сканирования)
+  # ============================================
+  safex:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: safex-scanner
+    ports:
+      - "8001:8000"  # API для управления сканированием
+    environment:
+      - ENVIRONMENT=test
+      - DEBUG=True
+      - LOG_LEVEL=DEBUG
+    volumes:
+      - ./src:/app/src
+      - ./configs:/app/configs
+      - ./knowledge_base:/app/knowledge_base
+      - ./test-reports:/app/reports  # Отчеты сканирования
+    command: >
+      sh -c "python safex.py --help &&
+             echo '🔍 SAFEX готов к сканированию!'"
+    networks:
+      - safex-test-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "test", "-f", "/app/src/__init__.py"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ============================================
+  # 🎯 ТЕСТОВЫЙ СЕРВЕР (с уязвимостями)
+  # ============================================
+  test-server:
+    image: nginx:alpine
+    container_name: test-vulnerable-server
+    ports:
+      - "8081:80"  # Тестовый сервер на порту 8081
+      - "4431:443"
+    volumes:
+      - ./test-targets:/usr/share/nginx/html:ro  # Тестовые файлы с уязвимостями
+      - ./test-targets/nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - safex-test-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+  # ============================================
+  # 🐘 PostgreSQL (для тестовой базы SAFEX)
+  # ============================================
+  test-db:
+    image: postgres:15-alpine
+    container_name: safex-test-db
+    environment:
+      POSTGRES_DB: safex_test
+      POSTGRES_USER: safex_test
+      POSTGRES_PASSWORD: test_password_123
+    volumes:
+      - test-db-data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    networks:
+      - safex-test-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U safex_test"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # ============================================
+  # 🔴 Redis (для тестового кэша SAFEX)
+  # ============================================
+  test-redis:
+    image: redis:7-alpine
+    container_name: safex-test-redis
+    command: redis-server --requirepass "test_redis_pass"
+    volumes:
+      - test-redis-data:/data
+    ports:
+      - "6381:6379"
+    networks:
+      - safex-test-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+# ============================================
+# 🌐 Изолированная сеть для тестов
+# ============================================
+networks:
+  safex-test-network:
+    name: safex-test-network
+    driver: bridge
+
+# ============================================
+# 💾 Изолированные volumes
+# ============================================
+volumes:
+  test-db-data:
+    name: safex-test-db-data
+
+  test-redis-data:
+    name: safex-test-redis-data

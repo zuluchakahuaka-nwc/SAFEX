@@ -67,6 +67,10 @@ data/*
 # Weird folders
 -p/
 
+# Test targets — intentionally vulnerable fixtures with FAKE secrets.
+# Keep local; never commit so no dummy credentials enter the repo.
+test-targets/
+
 # Build artifacts
 *.egg-info/
 dist/

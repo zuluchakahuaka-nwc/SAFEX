@@ -1,0 +1,98 @@
+{
+  "BOT-001": {
+    "id": "BOT-001",
+    "name": "Telegram Bot Token Leak",
+    "severity": "CRITICAL",
+    "description": "Telegram bot token found in source code or configuration files",
+    "cwe": "CWE-798",
+    "remediation": "Rotate token via @BotFather. Store in environment variables or secret manager."
+  },
+  "BOT-002": {
+    "id": "BOT-002",
+    "name": "Webhook Without Secret Verification",
+    "severity": "HIGH",
+    "description": "Webhook endpoint does not verify the secret token header",
+    "cwe": "CWE-345",
+    "remediation": "Set secret_token in set_webhook and verify X-Telegram-Bot-Api-Secret-Token header."
+  },
+  "BOT-003": {
+    "id": "BOT-003",
+    "name": "Webhook Over HTTP",
+    "severity": "HIGH",
+    "description": "Webhook URL uses HTTP instead of HTTPS",
+    "cwe": "CWE-319",
+    "remediation": "Configure HTTPS with valid TLS certificates for webhook endpoint."
+  },
+  "BOT-004": {
+    "id": "BOT-004",
+    "name": "Bot eval/exec RCE",
+    "severity": "CRITICAL",
+    "description": "Use of eval() or exec() with potentially user-controlled data",
+    "cwe": "CWE-95",
+    "remediation": "Never eval/exec untrusted data. Use parsers and whitelists."
+  },
+  "BOT-005": {
+    "id": "BOT-005",
+    "name": "Bot Command Injection",
+    "severity": "CRITICAL",
+    "description": "Subprocess call with shell=True allows command injection",
+    "cwe": "CWE-78",
+    "remediation": "Use argument lists for subprocess calls. Never use shell=True."
+  },
+  "BOT-006": {
+    "id": "BOT-006",
+    "name": "No Rate Limiting",
+    "severity": "MEDIUM",
+    "description": "Bot has no rate limiting — susceptible to flood and spam",
+    "cwe": "CWE-770",
+    "remediation": "Implement per-user and global rate limiting middleware."
+  },
+  "BOT-007": {
+    "id": "BOT-007",
+    "name": "Insecure File Upload",
+    "severity": "HIGH",
+    "description": "File upload/download without type/size validation or malware scan",
+    "cwe": "CWE-434",
+    "remediation": "Whitelist MIME types, enforce size limits, save outside webroot, scan for malware."
+  },
+  "BOT-008": {
+    "id": "BOT-008",
+    "name": "Secret Leakage in Logs",
+    "severity": "HIGH",
+    "description": "Tokens or secrets may be logged in plain text",
+    "cwe": "CWE-532",
+    "remediation": "Never log secrets. Redact sensitive fields before logging."
+  },
+  "BOT-009": {
+    "id": "BOT-009",
+    "name": "Container Runs as Root",
+    "severity": "HIGH",
+    "description": "Bot container runs as root — privilege escalation risk",
+    "cwe": "CWE-250",
+    "remediation": "Add USER directive with non-root user. Drop all capabilities."
+  },
+  "BOT-010": {
+    "id": "BOT-010",
+    "name": "Insecure Deserialization",
+    "severity": "HIGH",
+    "description": "Unsafe pickle or yaml.load in bot code",
+    "cwe": "CWE-502",
+    "remediation": "Use yaml.safe_load() and json.loads(). Never unpickle untrusted data."
+  },
+  "BOT-011": {
+    "id": "BOT-011",
+    "name": "No IP Allowlist for Webhook",
+    "severity": "MEDIUM",
+    "description": "Webhook accepts requests from any IP without restriction",
+    "cwe": "CWE-284",
+    "remediation": "Restrict webhook to Telegram IP ranges (149.154.160.0/20, 91.108.4.0/22)."
+  },
+  "BOT-012": {
+    "id": "BOT-012",
+    "name": "Hardcoded Webhook Secret",
+    "severity": "CRITICAL",
+    "description": "WEBHOOK_SECRET hardcoded in source code",
+    "cwe": "CWE-798",
+    "remediation": "Move to .env (not in VCS) or secret manager."
+  }
+}

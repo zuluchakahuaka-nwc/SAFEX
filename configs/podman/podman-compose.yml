@@ -1,0 +1,48 @@
+# Podman Compose — Secure Telegram Bot Deployment
+# Usage: podman-compose up -d
+
+version: "3.8"
+
+services:
+  bot:
+    build:
+      context: .
+      dockerfile: Containerfile
+    restart: unless-stopped
+    environment:
+      - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
+      - WEBHOOK_SECRET=${WEBHOOK_SECRET}
+    networks:
+      - botnet
+    expose:
+      - "8000"
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: "0.5"
+    tmpfs:
+      - /tmp/uploads:rw,size=50m
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+
+  nginx:
+    image: docker.io/nginx:1.25-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/certs:/etc/nginx/certs:ro
+    networks:
+      - botnet
+    depends_on:
+      - bot
+
+networks:
+  botnet:
+    driver: bridge

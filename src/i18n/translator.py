@@ -108,6 +108,33 @@ class TranslationManager:
                 "msg_error": "Error",
                 "msg_warning": "Warning",
                 "msg_info": "Information",
+                "welcome": "Welcome to SAFEX",
+                "scan": "Scanning",
+                "validate": "Validation",
+                "report": "Report",
+                "low_risk": "LOW RISK",
+                "medium_risk": "MEDIUM RISK",
+                "high_risk": "HIGH RISK",
+                "critical_risk": "CRITICAL RISK",
+                "system_status": "System Status",
+                "version": "Version",
+                "environment": "Environment",
+                "language": "Language",
+                "safety_level": "Safety Level",
+                "available_scanners": "Available Scanners",
+                "available_tools": "Available Tools",
+                "available_languages": "Available Languages",
+                "validating_target": "Validating target: %s",
+                "scanning_target": "Scanning target: %s",
+                "generating_report": "Generating report...",
+                "validation_success": "Validation successful",
+                "validation_failed": "Validation failed",
+                "scan_complete": "Scan complete",
+                "scan_failed": "Scan failed",
+                "findings": "Findings",
+                "report_generated": "Report generated",
+                "operation_cancelled": "Operation cancelled",
+                "aggressive_mode_warning": "WARNING: Aggressive mode enabled!",
             },
             "ru": {
                 # App info
@@ -154,19 +181,50 @@ class TranslationManager:
                 "msg_error": "Ошибка",
                 "msg_warning": "Предупреждение",
                 "msg_info": "Информация",
+                "welcome": "Добро пожаловать в SAFEX",
+                "scan": "Сканирование",
+                "validate": "Валидация",
+                "report": "Отчет",
+                "low_risk": "🟢 НИЗКИЙ РИСК",
+                "medium_risk": "🟡 СРЕДНИЙ РИСК",
+                "high_risk": "🔴 ВЫСОКИЙ РИСК",
+                "critical_risk": "🚨 КРИТИЧЕСКИЙ РИСК",
+                "system_status": "Статус системы",
+                "version": "Версия",
+                "environment": "Среда",
+                "language": "Язык",
+                "safety_level": "Уровень безопасности",
+                "available_scanners": "Доступные сканеры",
+                "available_tools": "Доступные инструменты",
+                "available_languages": "Доступные языки",
+                "validating_target": "Валидация цели: %s",
+                "scanning_target": "Сканирование цели: %s",
+                "generating_report": "Генерация отчета...",
+                "validation_success": "Валидация успешна",
+                "validation_failed": "Валидация не удалась",
+                "scan_complete": "Сканирование завершено",
+                "scan_failed": "Сканирование не удалось",
+                "findings": "Результаты",
+                "report_generated": "Отчет сгенерирован",
+                "operation_cancelled": "Операция отменена",
+                "aggressive_mode_warning": "ВНИМАНИЕ: Агрессивный режим включен!",
             },
         }
 
-    def translate(self, key: str) -> str:
+    def translate(self, key: str, language: Optional[str] = None) -> str:
         """
         Get translation for key
 
         Args:
             key: Translation key
+            language: Optional language code (e.g. 'en', 'ru')
 
         Returns:
             Translated string or key if not found
         """
+        if language is not None:
+            translations = self.all_translations.get(language, self.current_translations)
+            return translations.get(key, key)
         return self.current_translations.get(key, key)
 
     def set_language(self, language: Language):
@@ -204,6 +262,10 @@ class TranslationManager:
             Language.ITALIAN: "Italiano",
         }
         return names.get(language, language.value)
+
+    def get_available_languages(self) -> list:
+        """Get list of available language codes"""
+        return list(self.all_translations.keys())
 
 
 # Global translation manager instance

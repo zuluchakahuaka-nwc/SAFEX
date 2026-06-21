@@ -1,0 +1,21 @@
+FROM python:3.11-slim
+
+RUN useradd --create-home --shell /bin/bash botuser
+
+WORKDIR /app
+
+COPY requirements.txt /app/
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential && \
+    pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt && \
+    apt-get purge -y build-essential && apt-get autoremove -y && \
+    rm -rf /var/lib/apt/lists/*
+
+COPY . /app
+RUN chown -R botuser:botuser /app
+
+USER botuser
+
+ENV PYTHONUNBUFFERED=1
+CMD ["gunicorn", "-w", "2", "-b", "0.0.0.0:8000", "app:app"]

@@ -4,8 +4,8 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
-[![Arch Linux](https://img.shields.io/badge/Arch%20Linux-supported-blue.svg)](https://archlinux.org/)
-[![Manjaro](https://img.shields.io/badge/Manjaro-supported-green.svg)](https://manjaro.org/)
+[![Ubuntu](https://img.shields.io/badge/Ubuntu-supported-orange.svg)](https://ubuntu.com/)
+[![Podman](https://img.shields.io/badge/Podman-supported-blue.svg)](https://podman.io/)
 
 ---
 
@@ -13,9 +13,9 @@
 
 - [Features](#features)
 - [Safety Levels](#safety-levels)
-- [Installation](#installation)
-  - [Arch Linux / Manjaro (Recommended)](#arch-linux--manjaro-recommended)
-  - [Other Linux Distributions](#other-linux-distributions)
+  - [Installation](#installation)
+   - [Ubuntu (Recommended)](#ubuntu-recommended)
+   - [Other Linux Distributions](#other-linux-distributions)
   - [Windows](#windows)
   - [macOS](#macos)
 - [Quick Start](#quick-start)
@@ -41,6 +41,17 @@
 - **Vulnerability Scanner** - Scan for known vulnerabilities
 - **Network Scanner** - Analyze network security
 - **Web Scanner** - Test web applications
+- **Bot Security Scanner** - Scan Telegram/Discord/Slack bots for vulnerabilities
+
+### 🤖 Bot Security (NEW)
+Specialized security module for messaging bot owners:
+- **Token Leak Detection** - Finds exposed Telegram, Discord, Slack, VK tokens
+- **Webhook Security** - Validates HTTPS, secret verification, IP allowlist, payload limits
+- **Code Audit** - Detects eval/exec, command injection, deserialization, hardcoded secrets
+- **Audit Checklist** - Generates prioritized security checklists (HIGH/MEDIUM/LOW)
+- **Incident Response** - 7-step response plan for compromised bots
+- **Podman Deployment** - Generates secure container templates (Containerfile, compose, nginx, systemd)
+- Supports: Telegram, Discord, Slack, VK, Viber, WhatsApp
 
 ### 🛡️ Safety Levels
 - **Discovery** - Read-only scanning
@@ -74,7 +85,7 @@ Support for 10+ languages:
 - Rollback capability
 
 ### 🚀 System Integration
-- Systemd service for Arch Linux / Manjaro
+- Systemd service for Ubuntu
 - Backup management
 - System health monitoring
 - Progressive execution with rate limiting
@@ -107,49 +118,49 @@ Support for 10+ languages:
 
 ## 📦 Installation
 
-### Arch Linux / Manjaro (Recommended)
+### Ubuntu (Recommended)
 
-#### Method 1: Using PKGBUILD
+#### Method 1: Using Podman Container (Recommended)
 
 ```bash
+# Install Podman
+sudo apt-get update
+sudo apt-get install -y podman
+
 # Clone repository
 git clone https://github.com/zuluchakahuaka-nwc/safex.git
 cd safex
 
-# Build and install
-makepkg -si
+# Build and run Podman container
+podman build -t safex .
+podman run -it --rm -v $(pwd):/app safex
 ```
 
-#### Method 2: Using Installation Script
-
-```bash
-# Clone repository
-git clone https://github.com/zuluchakahuaka-nwc/safex.git
-cd safex
-
-# Run installation script
-sudo bash scripts/install_pacman.sh
-```
-
-#### Method 3: Manual Installation
+#### Method 2: Manual Installation
 
 ```bash
 # Install dependencies
-sudo pacman -S python python-pip python-pyqt5 python-requests \
-  python-yaml python-rich python-colorama python-click python-tqdm \
-  python-psutil python-pygments python-pytest python-pyyaml \
-  python-cryptography python-fastapi python-uvicorn python-redis \
-  python-sqlalchemy nmap nikto sqlmap
+sudo apt-get update
+sudo apt-get install -y python3 python3-pip python3-venv \
+  python3-pyqt5 python3-requests python3-yaml python3-rich \
+  python3-colorama python3-click python3-tqdm python3-psutil \
+  python3-pygments python3-pytest python3-pyyaml \
+  python3-cryptography nmap nikto sqlmap
 
-# Clone and install
+# Clone repository
 git clone https://github.com/zuluchakahuaka-nwc/safex.git
 cd safex
-sudo bash scripts/install_pacman.sh
-```
 
-**For detailed installation instructions, see:**
-- [Arch Linux / Manjaro Installation Guide](docs/ARCH_INSTALL.md)
-- [Detailed Installation Guide](docs/INSTALLATION_ARCH.md)
+# Create virtual environment
+python3 -m venv venv
+source venv/bin/activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Run SAFEX
+python safex.py --help
+```
 
 ### Other Linux Distributions
 
@@ -332,6 +343,25 @@ safex list tools
 safex list languages
 ```
 
+#### Bot Security Commands
+
+```bash
+# Scan a bot project for vulnerabilities
+safex bot-scan /path/to/bot-project --platform telegram
+
+# Generate security audit checklist
+safex bot-audit --platform telegram --text
+
+# Generate JSON checklist
+safex bot-audit --platform discord --output checklist.json
+
+# Generate Podman deployment templates
+safex bot-deploy --platform telegram --domain mybot.example.com --output-dir ./my-bot-deploy
+
+# Scan with bot scanner (via unified scan command)
+safex scan /path/to/bot-project --scanner bot
+```
+
 ### Python API
 
 ```python
@@ -398,8 +428,10 @@ See [README_I18N.md](README_I18N.md) for detailed instructions.
 ## 📚 Documentation
 
 - **[Main Documentation](README.md)** - This file
-- **[Installation Guide for Arch Linux](docs/ARCH_INSTALL.md)** - Arch/Manjaro installation
-- **[Detailed Installation Guide](docs/INSTALLATION_ARCH.md)** - Comprehensive installation
+- **[Architecture Guide](docs/ARCHITECTURE.md)** - Deep architecture, data flow, extension points
+- **[AI Agent Guide](docs/AI_AGENT_GUIDE.md)** - Quick reference for AI coding agents
+- **[Installation Guide for Ubuntu](docs/UBUNTU_INSTALL.md)** - Ubuntu installation with Podman
+- **[Detailed Installation Guide](docs/INSTALLATION_UBUNTU.md)** - Comprehensive installation
 - **[Security Guidelines](SECURITY.md)** - Security best practices
 - **[Safe Testing Guide](SAFE_TESTING.md)** - Safe testing procedures
 - **[Internationalization Guide](README_I18N.md)** - i18n documentation
@@ -411,17 +443,17 @@ See [README_I18N.md](README_I18N.md) for detailed instructions.
 ## 🧪 Testing
 
 ```bash
-# Run all tests
-pytest tests/ -v
+# Run all tests in Podman container
+podman run --rm -v "$(pwd):/app" -w /app python:3.11 pytest tests/ -v
 
 # Run specific test file
-pytest tests/test_basic.py -v
+podman run --rm -v "$(pwd):/app" -w /app python:3.11 pytest tests/test_basic.py -v
 
 # Run with coverage
-pytest tests/ --cov=src --cov-report=html
+podman run --rm -v "$(pwd):/app" -w /app python:3.11 pytest tests/ --cov=src --cov-report=html
 
 # Run tests for specific module
-pytest tests/test_core.py -v
+podman run --rm -v "$(pwd):/app" -w /app python:3.11 pytest tests/test_core.py -v
 ```
 
 ---
@@ -429,7 +461,7 @@ pytest tests/test_core.py -v
 ## 🔧 Configuration
 
 Configuration file location:
-- **Arch Linux / Manjaro**: `/etc/safex/config.yaml`
+- **Ubuntu**: `/etc/safex/config.yaml`
 - **Other Linux**: `~/.config/safex/config.yaml`
 - **Windows**: `%APPDATA%\SAFEX\config.yaml`
 - **macOS**: `~/Library/Application Support/SAFEX/config.yaml`
@@ -497,12 +529,13 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 📊 Project Stats
 
 - **Version**: 1.0.0
-- **Python Files**: 57+
-- **Lines of Code**: 10,000+
-- **Tests**: 50+
+- **Python Files**: 65+
+- **Lines of Code**: 12,000+
+- **Tests**: 47+
 - **Languages Supported**: 10+
-- **Vulnerabilities in KB**: 8+
-- **Scanners**: 6+
+- **Vulnerabilities in KB**: 20+
+- **Scanners**: 4+
+- **Bot Platforms**: 7
 - **Report Formats**: 5+
 
 ---

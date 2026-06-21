@@ -21,7 +21,7 @@
 
 1. Открой **GitHub Desktop**
 2. Нажми **File** → **Add Local Repository...**
-3. Выбери папку: `D:\Projects\SAFEX`
+3. Выбери папку: `D:\Projects\SAFEXerver`
 4. Нажми **Add Repository**
 5. В правом верхнем углу нажми **Publish repository**
 6. Заполни поля:
@@ -36,7 +36,7 @@
 Открой терминал (PowerShell или CMD) и выполни:
 
 ```powershell
-cd D:\Projects\SAFEX
+cd D:\Projects\SAFEXerver
 
 # Инициализация репозитория
 git init
@@ -62,7 +62,7 @@ git commit -m "Initial commit: SAFEX v1.0.0
 - Progressive execution with rate limiting
 - Translation Manager with full Russian interface
 - FastAPI REST API (ready for deployment)
-- Arch Linux / Manjaro installation (PKGBUILD)
+- Ubuntu installation with Podman
 - Comprehensive documentation
 
 📦 Total files: 131+

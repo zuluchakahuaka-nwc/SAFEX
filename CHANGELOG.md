@@ -29,16 +29,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Progressive execution with rate limiting
 - Translation Manager with full Russian interface
 - FastAPI REST API (ready for deployment)
-- Docker support (alternative to pacman)
-- Systemd service for Arch Linux / Manjaro
-- PKGBUILD for easy installation via pacman
+- Podman support for containerized testing
+- Systemd service for Ubuntu
+- Comprehensive installation guides
 - Comprehensive documentation:
   - README.md
   - SECURITY.md
   - SAFE_TESTING.md
   - README_I18N.md
   - PROJECT_STRUCTURE.md
-  - Installation guides for Arch Linux / Manjaro
+  - Installation guides for Ubuntu
 
 ### Security
 - 2-phase validation before any destructive actions
@@ -66,7 +66,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Safe testing practices
 - Internationalization guide
 - Project structure documentation
-- Arch Linux / Manjaro installation guide
+- Ubuntu installation guide
 
 ### Testing
 - Basic tests (project structure, modules)
@@ -75,6 +75,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Config module tests
 
 ## [Unreleased]
+
+### Added
+- **Bot Security Module** (`src/bots_security/`) — security scanning and protection for messaging bot owners
+  - BotScanner: scans bot source for token leaks, eval/exec, command injection, deserialization, rate limiting, webhook issues
+  - WebhookGuard: validates HTTPS, secret verification, IP allowlist, payload size, timeouts
+  - TokenGuard: detects leaked tokens for Telegram, Discord, Slack, VK; validates .env safety
+  - AuditChecklist: generates prioritized security checklists (HIGH/MEDIUM/LOW) + incident response plan
+  - PodmanTemplates: generates secure Containerfile, podman-compose.yml, nginx.conf, systemd unit, .env.example
+  - Supports 7 platforms: Telegram, Discord, Slack, VK, Viber, WhatsApp, Generic
+- Bot security knowledge base: 12 bot-specific vulnerabilities (BOT-001..BOT-012) and 12 security rules
+- Podman deployment templates in `configs/podman/` (Containerfile, compose, nginx, systemd, .env)
+- CLI commands: `bot-scan`, `bot-audit`, `bot-deploy`
+- Scanner integration: `bot` scanner registered in ScannerFactory
+- 31 tests for bot security module
+- Architecture documentation (`docs/ARCHITECTURE.md`)
+- AI Agent guide (`docs/AI_AGENT_GUIDE.md`)
+- Updated PROJECT_STRUCTURE.md with bots_security module
 
 ### Planned
 - More vulnerability patterns in knowledge base

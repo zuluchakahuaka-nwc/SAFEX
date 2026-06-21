@@ -10,7 +10,7 @@ import os
 
 def test_project_structure():
     """Test that project structure is correct"""
-    project_root = Path("D:/Projects/SAFEX")
+    project_root = Path(__file__).resolve().parent.parent
 
     assert project_root.exists()
     assert (project_root / "src").exists()

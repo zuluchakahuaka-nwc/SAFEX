@@ -1,0 +1,186 @@
+# Docker Compose для ТЕСТОВОЙ среды
+# Все контейнеры изолированы, можно быстро удалить!
+
+version: '3.8'
+
+services:
+  # ============================================
+  # 🐳 SAFEX API (Тестовая версия)
+  # ============================================
+  safex-api:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: safex-test-api
+    ports:
+      - "8001:8000"  # Другой порт для тестов!
+    environment:
+      - ENVIRONMENT=test
+      - DATABASE_URL=postgresql://safex_test:test_password123@test-db:5432/safex_test
+      - REDIS_URL=redis://test-redis:6379/1
+      - DEBUG=True
+      - LOG_LEVEL=DEBUG
+    volumes:
+      - ./src:/app/src  # Для hot-reload при разработке
+      - test-data:/app/data  # Изолированный volume!
+      - test-reports:/app/reports  # Изолированный volume!
+      - test-logs:/app/logs  # Изолированный volume!
+    depends_on:
+      test-db:
+        condition: service_healthy
+      test-redis:
+        condition: service_healthy
+    networks:
+      - test-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # ============================================
+  # 🐘 PostgreSQL (Тестовая база)
+  # ============================================
+  test-db:
+    image: postgres:15-alpine
+    container_name: safex-test-db
+    environment:
+      POSTGRES_DB: safex_test
+      POSTGRES_USER: safex_test
+      POSTGRES_PASSWORD: test_password123  # Только для тестов!
+    volumes:
+      - test-db-data:/var/lib/postgresql/data  # Изолированный volume!
+    ports:
+      - "5433:5432"  # Другой порт!
+    networks:
+      - test-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U safex_test"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # ============================================
+  # 🔴 Redis (Тестовый кеш)
+  # ============================================
+  test-redis:
+    image: redis:7-alpine
+    container_name: safex-test-redis
+    command: redis-server --requirepass "test_redis_pass"
+    volumes:
+      - test-redis-data:/data  # Изолированный volume!
+    ports:
+      - "6380:6379"  # Другой порт!
+    networks:
+      - test-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+  # ============================================
+  # 🌐 Nginx (Обратный прокси)
+  # ============================================
+  test-nginx:
+    image: nginx:alpine
+    container_name: safex-test-nginx
+    ports:
+      - "8443:443"  # Другой порт для HTTPS!
+      - "8081:80"  # Другой порт для HTTP!
+    volumes:
+      - ./docker/nginx-test.conf:/etc/nginx/nginx.conf:ro
+      - test-nginx-logs:/var/log/nginx
+    depends_on:
+      - safex-api
+    networks:
+      - test-network
+    restart: unless-stopped
+
+  # ============================================
+  # 📊 Prometheus (Мониторинг)
+  # ============================================
+  test-prometheus:
+    image: prom/prometheus:latest
+    container_name: safex-test-prometheus
+    ports:
+      - "9091:9090"  # Другой порт!
+    volumes:
+      - ./docker/prometheus-test.yml:/etc/prometheus/prometheus.yml:ro
+      - test-prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    networks:
+      - test-network
+    restart: unless-stopped
+
+  # ============================================
+  # 📈 Grafana (Визуализация)
+  # ============================================
+  test-grafana:
+    image: grafana/grafana:latest
+    container_name: safex-test-grafana
+    ports:
+      - "3001:3000"  # Другой порт!
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin_test123  # Только для тестов!
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - test-grafana-data:/var/lib/grafana
+    depends_on:
+      - test-prometheus
+    networks:
+      - test-network
+    restart: unless-stopped
+
+# ============================================
+# 🌐 Изолированная сеть для тестов
+# ============================================
+networks:
+  test-network:
+    name: safex-test-network
+    driver: bridge
+    internal: false  # Можно заходить из хоста
+
+# ============================================
+# 💾 Изолированные volumes (для тестов)
+# ============================================
+volumes:
+  # База данных (только тесты!)
+  test-db-data:
+    name: safex-test-db-data
+
+  # Redis (только тесты!)
+  test-redis-data:
+    name: safex-test-redis-data
+
+  # Данные приложения (только тесты!)
+  test-data:
+    name: safex-test-data
+
+  # Отчеты (только тесты!)
+  test-reports:
+    name: safex-test-reports
+
+  # Логи (только тесты!)
+  test-logs:
+    name: safex-test-logs
+
+  # Nginx логи (только тесты!)
+  test-nginx-logs:
+    name: safex-test-nginx-logs
+
+  # Prometheus (только тесты!)
+  test-prometheus-data:
+    name: safex-test-prometheus-data
+
+  # Grafana (только тесты!)
+  test-grafana-data:
+    name: safex-test-grafana-data
