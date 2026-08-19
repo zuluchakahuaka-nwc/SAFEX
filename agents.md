@@ -106,3 +106,14 @@ constraints:
   - Final single-file executable must be named SAFEX.exe and copied to D:\\Projects\\SAFEXerver\\corrected\\SAFEX.exe; if onedir produced, copy folder to D:\\Projects\\SAFEXerver\\corrected\\SAFEX_dist and provide installer scripts in the same corrected folder.
   - Use PODMAN for containerized testing on ALL platforms. DO NOT use Docker or pacman.
   - If Inno/NSIS not available, still produce installer scripts and built artifacts in the output_path.
+
+## Local-only files - NEVER push to GitHub
+
+The following are **local-only**. They must be gitignored and NEVER committed/pushed to any remote:
+
+- `AGENTS.md` (this file)
+- `TODO.md`
+- any local config / secrets: `.env*`, credentials, keys, PINs, IMEI, private configs
+
+They live on disk only. If you share project state, do so **without** these files.
+See `.gitignore` (`/AGENTS.md`, `/TODO.md`).
