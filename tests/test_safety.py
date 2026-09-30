@@ -30,10 +30,10 @@ def test_safety_manager():
 
     # Test get_warning_emoji
     emoji = sm.get_warning_emoji("LOW")
-    assert emoji == "🟢"
+    assert emoji == "[+] "
 
     emoji = sm.get_warning_emoji("CRITICAL")
-    assert emoji == "🚨"
+    assert emoji == "[!!] "
 
 
 def test_safety_levels():

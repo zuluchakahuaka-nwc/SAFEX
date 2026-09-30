@@ -145,10 +145,10 @@ def test_translation_manager_russian():
         "scan": "Сканирование",
         "validate": "Валидация",
         "report": "Отчет",
-        "low_risk": "🟢 НИЗКИЙ РИСК",
-        "medium_risk": "🟡 СРЕДНИЙ РИСК",
-        "high_risk": "🔴 ВЫСОКИЙ РИСК",
-        "critical_risk": "🚨 КРИТИЧЕСКИЙ РИСК",
+        "low_risk": "[+] НИЗКИЙ РИСК",
+        "medium_risk": "[!] СРЕДНИЙ РИСК",
+        "high_risk": "[X] ВЫСОКИЙ РИСК",
+        "critical_risk": "[!!] КРИТИЧЕСКИЙ РИСК",
     }
 
     for key, expected in tests.items():

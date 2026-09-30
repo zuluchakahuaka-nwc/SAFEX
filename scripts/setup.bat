@@ -1,4 +1,5 @@
 @echo off
+chcp 65001 >nul
 REM SAFEX Setup Script for Windows
 REM Copyright 2024 SAFEX Project
 

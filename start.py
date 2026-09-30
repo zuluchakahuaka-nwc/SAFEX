@@ -39,17 +39,17 @@ def check_dependencies():
 
             if result.returncode == 0:
                 version_info = result.stdout.strip()
-                logger.info(f"✓ {name}: {version_info}")
+                logger.info(f"[OK] {name}: {version_info}")
             else:
                 logger.warning(f"{name} version check returned {result.returncode}")
         except FileNotFoundError:
             missing.append(name)
-            logger.warning(f"✗ {name}: not found")
+            logger.warning(f"[X] {name}: not found")
         except subprocess.TimeoutExpired:
             missing.append(name)
-            logger.error(f"✗ {name}: version check timed out")
+            logger.error(f"[X] {name}: version check timed out")
         except Exception as e:
-            logger.error(f"✗ {name}: {e}")
+            logger.error(f"[X] {name}: {e}")
             missing.append(name)
 
     if missing:
@@ -78,7 +78,7 @@ def setup_environment():
             logger.error(".env.example not found")
             return False
     else:
-        logger.info("✓ .env file exists")
+        logger.info("[OK] .env file exists")
 
     return True
 
@@ -101,7 +101,7 @@ def create_directories():
         dir_path = project_root / directory
         dir_path.mkdir(parents=True, exist_ok=True)
 
-    logger.info(f"✓ {directory}")
+    logger.info(f"[OK] {directory}")
 
     return True
 
@@ -123,9 +123,11 @@ def start_services():
                 check=True,
                 timeout=300,
             )
-            logger.info("✓ Services started with Docker Compose")
+            logger.info("[OK] Services started with Docker Compose")
             return True
-        else:
+        except Exception as e:
+            logger.warning(f"Docker Compose failed: {e}")
+
         logger.info("Starting services locally...")
 
         # Start API server
@@ -137,7 +139,7 @@ def start_services():
                 stderr=subprocess.PIPE,
                 text=True,
             )
-            logger.info("✓ API server started")
+            logger.info("[OK] API server started")
         except Exception as e:
             logger.error(f"Failed to start API server: {e}")
             return False
@@ -151,7 +153,7 @@ def start_services():
                 stderr=subprocess.PIPE,
                 text=True,
             )
-            logger.info("✓ Celery worker started")
+            logger.info("[OK] Celery worker started")
         except Exception as e:
             logger.error(f"Failed to start Celery worker: {e}")
             return False
@@ -165,7 +167,7 @@ def start_services():
                 stderr=subprocess.PIPE,
                 text=True,
             )
-            logger.info("✓ Celery beat started")
+            logger.info("[OK] Celery beat started")
         except Exception as e:
             logger.error(f"Failed to start Celery beat: {e}")
             return False

@@ -1,6 +1,7 @@
 @echo off
+chcp 65001 >nul
 REM ═════════════════════════════════════════════════════════════
-REM 🐳 УПРАВЛЕНИЕ ТЕСТОВОЙ СРЕДОЙ DOCKER (Windows)
+REM УПРАВЛЕНИЕ ТЕСТОВОЙ СРЕДОЙ DOCKER (Windows)
 REM ═════════════════════════════════════════════════════════════
 
 setlocal enabledelayedexpansion
@@ -15,7 +16,7 @@ set "NC=[0m"
 echo.
 echo ╔══════════════════════════════════════════════════════════╗
 echo ║                                                          ║
-echo ║           🐳 SAFEX TEST DOCKER MANAGER                  ║
+echo ║ SAFEX TEST DOCKER MANAGER ║
 echo ║                                                          ║
 echo ╚══════════════════════════════════════════════════════════╝
 echo.
@@ -46,8 +47,8 @@ echo   status      - Показать статус контейнеров
 echo   logs        - Показать логи всех контейнеров
 echo   logs-api    - Показать логи API
 echo   logs-db     - Показать логи базы данных
-echo   clean       - ⚠️  УДАЛИТЬ ВСЕ контейнеры и данные!
-echo   reset       - ⚠️  ОСТОРОЖНО: Полный сброс (удаление + пересоздание)
+echo clean - [!] УДАЛИТЬ ВСЕ контейнеры и данные!
+echo reset - [!] ОСТОРОЖНО: Полный сброс (удаление + пересоздание)
 echo   backup      - Создать бэкап тестовых данных
 echo   restore     - Восстановить бэкап
 echo   help        - Показать эту справку
@@ -60,12 +61,12 @@ echo.
 goto end
 
 :up
-echo %BLUE%ℹ️  Запуск тестовой среды...%NC%
+echo %BLUE%ℹ Запуск тестовой среды...%NC%
 docker-compose -f docker-compose.test.yml up -d
 if %ERRORLEVEL% EQU 0 (
-    echo %GREEN%✅ Тестовая среда запущена!%NC%
+    echo %GREEN%[OK] Тестовая среда запущена!%NC%
     echo.
-    echo 🌐 Доступные сервисы:
+    echo Доступные сервисы:
     echo    - API: http://localhost:8001
     echo    - API Docs: http://localhost:8001/docs
     echo    - База данных: localhost:5433
@@ -73,75 +74,75 @@ if %ERRORLEVEL% EQU 0 (
     echo    - Prometheus: http://localhost:9091
     echo    - Grafana: http://localhost:3001 (admin/admin_test123)
     echo.
-    echo 📝 Логи:
+    echo Логи:
     echo    %0 logs         # Все логи
     echo    %0 logs-api     # Логи API
     echo    %0 logs-db      # Логи БД
     echo.
 ) else (
-    echo %RED%❌ Ошибка запуска тестовой среды%NC%
+    echo %RED%[FAIL] Ошибка запуска тестовой среды%NC%
     exit /b 1
 )
 goto end
 
 :down
-echo %BLUE%ℹ️  Остановка тестовой среды...%NC%
+echo %BLUE%ℹ Остановка тестовой среды...%NC%
 docker-compose -f docker-compose.test.yml down
 if %ERRORLEVEL% EQU 0 (
-    echo %GREEN%✅ Тестовая среда остановлена%NC%
+    echo %GREEN%[OK] Тестовая среда остановлена%NC%
     echo.
 ) else (
-    echo %RED%❌ Ошибка остановки тестовой среды%NC%
+    echo %RED%[FAIL] Ошибка остановки тестовой среды%NC%
     exit /b 1
 )
 goto end
 
 :restart
-echo %BLUE%ℹ️  Перезапуск тестовой среды...%NC%
+echo %BLUE%ℹ Перезапуск тестовой среды...%NC%
 docker-compose -f docker-compose.test.yml restart
 if %ERRORLEVEL% EQU 0 (
-    echo %GREEN%✅ Тестовая среда перезапущена%NC%
+    echo %GREEN%[OK] Тестовая среда перезапущена%NC%
     echo.
 ) else (
-    echo %RED%❌ Ошибка перезапуска тестовой среды%NC%
+    echo %RED%[FAIL] Ошибка перезапуска тестовой среды%NC%
     exit /b 1
 )
 goto end
 
 :status
-echo %BLUE%ℹ️  Статус контейнеров:%NC%
+echo %BLUE%ℹ Статус контейнеров:%NC%
 echo.
 docker-compose -f docker-compose.test.yml ps
 echo.
-echo %BLUE%ℹ️  Использование ресурсов:%NC%
+echo %BLUE%ℹ Использование ресурсов:%NC%
 echo.
 docker stats --no-stream
 goto end
 
 :logs
-echo %BLUE%ℹ️  Логи всех контейнеров:%NC%
+echo %BLUE%ℹ Логи всех контейнеров:%NC%
 echo.
 docker-compose -f docker-compose.test.yml logs -f
 goto end
 
 :logs_api
-echo %BLUE%ℹ️  Логи API контейнера:%NC%
+echo %BLUE%ℹ Логи API контейнера:%NC%
 echo.
 docker-compose -f docker-compose.test.yml logs -f safex-api
 goto end
 
 :logs_db
-echo %BLUE%ℹ️  Логи базы данных:%NC%
+echo %BLUE%ℹ Логи базы данных:%NC%
 echo.
 docker-compose -f docker-compose.test.yml logs -f test-db
 goto end
 
 :clean
-echo %YELLOW%⚠️  ВНИМАНИЕ! Это удалит ВСЕ тестовые контейнеры и данные!%NC%
+echo %YELLOW%[!] ВНИМАНИЕ! Это удалит ВСЕ тестовые контейнеры и данные!%NC%
 echo.
 set /p confirm="Вы уверены? (yes/no): "
 if /i "%confirm%"=="yes" (
-    echo %BLUE%ℹ️  Удаление контейнеров и данных...%NC%
+    echo %BLUE%ℹ Удаление контейнеров и данных...%NC%
     docker-compose -f docker-compose.test.yml down -v
 
     REM Удалить volumes
@@ -157,17 +158,17 @@ if /i "%confirm%"=="yes" (
     REM Удалить сеть
     docker network rm safex-test-network 2>nul
 
-    echo %GREEN%✅ Все контейнеры и данные удалены!%NC%
+    echo %GREEN%[OK] Все контейнеры и данные удалены!%NC%
     echo.
 ) else (
-    echo %BLUE%ℹ️  Отменено%NC%
+    echo %BLUE%ℹ Отменено%NC%
     echo.
 )
 goto end
 
 :reset
-echo %YELLOW%⚠️  ОСТОРОЖНО! Полный сброс тестовой среды!%NC%
-echo %YELLOW%⚠️  Это УДАЛИТ все контейнеры, данные и пересоздаст заново!%NC%
+echo %YELLOW%[!] ОСТОРОЖНО! Полный сброс тестовой среды!%NC%
+echo %YELLOW%[!] Это УДАЛИТ все контейнеры, данные и пересоздаст заново!%NC%
 echo.
 set /p confirm="Вы уверены? (yes/no): "
 if /i "%confirm%"=="yes" (
@@ -178,23 +179,23 @@ if /i "%confirm%"=="yes" (
     timeout /t 2 /nobreak >nul
 
     REM Пересоздать
-    echo %BLUE%ℹ️  Пересоздание тестовой среды...%NC%
+    echo %BLUE%ℹ Пересоздание тестовой среды...%NC%
     docker-compose -f docker-compose.test.yml up -d --force-recreate
     if %ERRORLEVEL% EQU 0 (
-        echo %GREEN%✅ Тестовая среда сброшена и пересоздана!%NC%
+        echo %GREEN%[OK] Тестовая среда сброшена и пересоздана!%NC%
         echo.
     ) else (
-        echo %RED%❌ Ошибка сброса тестовой среды%NC%
+        echo %RED%[FAIL] Ошибка сброса тестовой среды%NC%
         exit /b 1
     )
 ) else (
-    echo %BLUE%ℹ️  Отменено%NC%
+    echo %BLUE%ℹ Отменено%NC%
     echo.
 )
 goto end
 
 :backup
-echo %BLUE%ℹ️  Создание бэкапа тестовых данных...%NC%
+echo %BLUE%ℹ Создание бэкапа тестовых данных...%NC%
 echo.
 
 set BACKUP_DIR=docker\backups\test
@@ -204,22 +205,22 @@ set BACKUP_NAME=%BACKUP_NAME: =0%
 if not exist "%BACKUP_DIR%" mkdir "%BACKUP_DIR%"
 
 REM Бэкап volumes
-echo %BLUE%ℹ️  Бэкап volumes...%NC%
+echo %BLUE%ℹ Бэкап volumes...%NC%
 docker run --rm -v safex-test-db-data:/db-data -v "%BACKUP_DIR%":/backup alpine tar czf "/backup/%BACKUP_NAME%_db.tar.gz" -C /db-data .
 docker run --rm -v safex-test-redis-data:/redis-data -v "%BACKUP_DIR%":/backup alpine tar czf "/backup/%BACKUP_NAME%_redis.tar.gz" -C /redis-data .
 
-echo %GREEN%✅ Бэкап создан: %BACKUP_DIR%\%BACKUP_NAME%%NC%
+echo %GREEN%[OK] Бэкап создан: %BACKUP_DIR%\%BACKUP_NAME%%NC%
 echo.
 goto end
 
 :restore
-echo %BLUE%ℹ️  Восстановление бэкапа...%NC%
+echo %BLUE%ℹ Восстановление бэкапа...%NC%
 echo.
 
 set BACKUP_DIR=docker\backups\test
 
 if not exist "%BACKUP_DIR%" (
-    echo %RED%❌ Директория бэкапов не найдена: %BACKUP_DIR%%NC%
+    echo %RED%[FAIL] Директория бэкапов не найдена: %BACKUP_DIR%%NC%
     exit /b 1
 )
 
@@ -229,7 +230,7 @@ dir /B "%BACKUP_DIR%\*.tar.gz"
 set /p backup_name="Введите имя бэкапа для восстановления: "
 
 if exist "%BACKUP_DIR%\%backup_name%" (
-    echo %BLUE%ℹ️  Восстановление из: %backup_name%%NC%
+    echo %BLUE%ℹ Восстановление из: %backup_name%%NC%
 
     REM Остановить контейнеры
     docker-compose -f docker-compose.test.yml down
@@ -248,16 +249,16 @@ if exist "%BACKUP_DIR%\%backup_name%" (
     REM Запустить контейнеры
     docker-compose -f docker-compose.test.yml up -d
 
-    echo %GREEN%✅ Бэкап восстановлен!%NC%
+    echo %GREEN%[OK] Бэкап восстановлен!%NC%
     echo.
 ) else (
-    echo %RED%❌ Бэкап не найден: %backup_name%%NC%
+    echo %RED%[FAIL] Бэкап не найден: %backup_name%%NC%
     exit /b 1
 )
 goto end
 
 :unknown
-echo %RED%❌ Неизвестная команда: %1%NC%
+echo %RED%[FAIL] Неизвестная команда: %1%NC%
 echo.
 goto help
 

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ═════════════════════════════════════════════════════════════
-# 🐳 УПРАВЛЕНИЕ ТЕСТОВОЙ СРЕДОЙ DOCKER
+# УПРАВЛЕНИЕ ТЕСТОВОЙ СРЕДОЙ DOCKER
 # ═════════════════════════════════════════════════════════════
 
 # Цвета
@@ -13,26 +13,26 @@ NC='\033[0m' # No Color
 
 # Функции
 print_info() {
-    echo -e "${BLUE}ℹ️  $1${NC}"
+    echo -e "${BLUE}ℹ $1${NC}"
 }
 
 print_success() {
-    echo -e "${GREEN}✅ $1${NC}"
+    echo -e "${GREEN}[OK] $1${NC}"
 }
 
 print_warning() {
-    echo -e "${YELLOW}⚠️  $1${NC}"
+    echo -e "${YELLOW}[!] $1${NC}"
 }
 
 print_error() {
-    echo -e "${RED}❌ $1${NC}"
+    echo -e "${RED}[FAIL] $1${NC}"
 }
 
 print_header() {
     echo ""
     echo "╔══════════════════════════════════════════════════════════╗"
     echo "║                                                          ║"
-    echo "║           🐳 SAFEX TEST DOCKER MANAGER                  ║"
+    echo "║ SAFEX TEST DOCKER MANAGER ║"
     echo "║                                                          ║"
     echo "╚══════════════════════════════════════════════════════════╝"
     echo ""
@@ -50,8 +50,8 @@ show_help() {
     echo "  logs        - Показать логи всех контейнеров"
     echo "  logs-api    - Показать логи API"
     echo "  logs-db     - Показать логи базы данных"
-    echo "  clean       - ⚠️  УДАЛИТЬ ВСЕ контейнеры и данные!"
-    echo "  reset       - ⚠️  ОСТОРОЖНО: Полный сброс (удаление + пересоздание)"
+    echo " clean - [!] УДАЛИТЬ ВСЕ контейнеры и данные!"
+    echo " reset - [!] ОСТОРОЖНО: Полный сброс (удаление + пересоздание)"
     echo "  backup      - Создать бэкап тестовых данных"
     echo "  restore     - Восстановить бэкап"
     echo "  help        - Показать эту справку"
@@ -73,7 +73,7 @@ start_test_env() {
     if [ $? -eq 0 ]; then
         print_success "Тестовая среда запущена!"
         echo ""
-        echo "🌐 Доступные сервисы:"
+        echo " Доступные сервисы:"
         echo "   - API: http://localhost:8001"
         echo "   - API Docs: http://localhost:8001/docs"
         echo "   - База данных: localhost:5433"
@@ -81,7 +81,7 @@ start_test_env() {
         echo "   - Prometheus: http://localhost:9091"
         echo "   - Grafana: http://localhost:3001 (admin/admin_test123)"
         echo ""
-        echo "📝 Логи:"
+        echo " Логи:"
         echo "   $0 logs         # Все логи"
         echo "   $0 logs-api     # Логи API"
         echo "   $0 logs-db      # Логи БД"
@@ -160,7 +160,7 @@ show_logs_db() {
     docker-compose -f docker-compose.test.yml logs -f test-db
 }
 
-# ⚠️  Очистить (удалить все!)
+# [!] Очистить (удалить все!)
 clean_test_env() {
     print_header
     print_warning "ВНИМАНИЕ! Это удалит ВСЕ тестовые контейнеры и данные!"
@@ -197,7 +197,7 @@ clean_test_env() {
 # Полный сброс
 reset_test_env() {
     print_header
-    print_warning "⚠️  ОСТОРОЖНО! Полный сброс тестовой среды!"
+    print_warning "[!] ОСТОРОЖНО! Полный сброс тестовой среды!"
     print_warning "Это УДАЛИТ все контейнеры, данные и пересоздаст заново!"
     echo ""
 

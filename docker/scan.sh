@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ═══════════════════════════════════════════════════════════
-# 🐳 Запуск SAFEX + Тестовый сервер
+# Запуск SAFEX + Тестовый сервер
 # ═══════════════════════════════════════════════════════════
 
 # Цвета
@@ -16,7 +16,7 @@ print_header() {
     echo ""
     echo "╔════════════════════════════════════════════════════════╗"
     echo "║                                                          ║"
-    echo "║           🐳 SAFEX + ТЕСТОВЫЙ СЕРВЕР               ║"
+    echo "║ SAFEX + ТЕСТОВЫЙ СЕРВЕР ║"
     echo "║                                                          ║"
     echo "╚════════════════════════════════════════════════════════╝"
     echo ""
@@ -25,35 +25,35 @@ print_header() {
 # Запустить контейнеры
 start_scan() {
     print_header
-    echo -e "${BLUE}🚀 Запуск контейнеров...${NC}"
+    echo -e "${BLUE} Запуск контейнеров...${NC}"
     echo ""
     
     docker-compose -f docker-compose.scan.yml up -d
     
     if [ $? -eq 0 ]; then
         echo ""
-        echo -e "${GREEN}✅ Контейнеры запущены!${NC}"
+        echo -e "${GREEN}[OK] Контейнеры запущены!${NC}"
         echo ""
-        echo "📦 Контейнеры:"
-        echo "   🔴 safex-scanner        - SAFEX (порт 8001)"
-        echo "   🎯 test-vulnerable-server - Тестовый сервер (порт 8081)"
-        echo "   🐘 safex-test-db         - PostgreSQL (порт 5433)"
-        echo "   🔴 safex-test-redis      - Redis (порт 6381)"
+        echo " Контейнеры:"
+        echo " [X] safex-scanner - SAFEX (порт 8001)"
+        echo " test-vulnerable-server - Тестовый сервер (порт 8081)"
+        echo " safex-test-db - PostgreSQL (порт 5433)"
+        echo " [X] safex-test-redis - Redis (порт 6381)"
         echo ""
-        echo "🌐 Доступные URL:"
-        echo "   📄 Тестовая страница: http://localhost:8081"
-        echo "   🔍 SAFEX API: http://localhost:8001"
-        echo "   📊 Отчеты: ./test-reports/"
+        echo " Доступные URL:"
+        echo " Тестовая страница: http://localhost:8081"
+        echo " SAFEX API: http://localhost:8001"
+        echo " Отчеты: ./test-reports/"
         echo ""
     else
-        echo -e "${RED}❌ Ошибка запуска контейнеров${NC}"
+        echo -e "${RED}[FAIL] Ошибка запуска контейнеров${NC}"
         exit 1
     fi
 }
 
 # Сканировать тестовый сервер
 scan_target() {
-    echo -e "${CYAN}🔍 Сканирование тестового сервера...${NC}"
+    echo -e "${CYAN} Сканирование тестового сервера...${NC}"
     echo ""
     
     # Сканировать через SAFEX CLI
@@ -63,18 +63,18 @@ scan_target() {
     docker exec safex-scanner python safex.py scan test-targets/index.html --language ru
     
     echo ""
-    echo -e "${GREEN}✅ Сканирование завершено!${NC}"
+    echo -e "${GREEN}[OK] Сканирование завершено!${NC}"
     echo ""
 }
 
 # Показать отчеты
 show_reports() {
-    echo -e "${CYAN}📊 Отчеты сканирования:${NC}"
+    echo -e "${CYAN} Отчеты сканирования:${NC}"
     echo ""
     
     # Найти JSON отчеты
     find test-reports -name "*.json" -type f | while read -r file; do
-        echo -e "${YELLOW}📄 $file${NC}"
+        echo -e "${YELLOW} $file${NC}"
         # Показать последние 10 строк
         tail -10 "$file"
         echo ""
@@ -89,10 +89,10 @@ stop_scan() {
     docker-compose -f docker-compose.scan.yml down
     
     if [ $? -eq 0 ]; then
-        echo -e "${GREEN}✅ Контейнеры остановлены${NC}"
+        echo -e "${GREEN}[OK] Контейнеры остановлены${NC}"
         echo ""
     else
-        echo -e "${RED}❌ Ошибка остановки${NC}"
+        echo -e "${RED}[FAIL] Ошибка остановки${NC}"
         exit 1
     fi
 }
@@ -100,7 +100,7 @@ stop_scan() {
 # Очистить все
 clean_scan() {
     print_header
-    echo -e "${RED}🗑️  ОЧИСТКА ВСЕХ КОНТЕЙНЕРОВ И ДАННЫХ!${NC}"
+    echo -e "${RED} ОЧИСТКА ВСЕХ КОНТЕЙНЕРОВ И ДАННЫХ!${NC}"
     echo ""
     
     docker-compose -f docker-compose.scan.yml down -v
@@ -109,17 +109,17 @@ clean_scan() {
     rm -rf test-reports/*
     
     if [ $? -eq 0 ]; then
-        echo -e "${GREEN}✅ Все удалено${NC}"
+        echo -e "${GREEN}[OK] Все удалено${NC}"
         echo ""
     else
-        echo -e "${RED}❌ Ошибка удаления${NC}"
+        echo -e "${RED}[FAIL] Ошибка удаления${NC}"
         exit 1
     fi
 }
 
 # Показать логи SAFEX
 show_logs() {
-    echo -e "${CYAN}📝 Логи SAFEX:${NC}"
+    echo -e "${CYAN} Логи SAFEX:${NC}"
     echo ""
     
     docker logs -f safex-scanner
@@ -127,7 +127,7 @@ show_logs() {
 
 # Показать статус
 show_status() {
-    echo -e "${CYAN}📊 Статус контейнеров:${NC}"
+    echo -e "${CYAN} Статус контейнеров:${NC}"
     echo ""
     
     docker-compose -f docker-compose.scan.yml ps
@@ -145,7 +145,7 @@ show_help() {
     echo "  logs      - Показать логи SAFEX"
     echo "  status    - Показать статус контейнеров"
     echo "  stop      - Остановить контейнеры"
-    echo "  clean     - 🗑️  Удалить все контейнеры и данные"
+    echo " clean - Удалить все контейнеры и данные"
     echo "  help      - Показать эту справку"
     echo ""
     echo "Примеры:"
@@ -186,7 +186,7 @@ main() {
             show_help
             ;;
         *)
-            echo -e "${RED}❌ Неизвестная команда: $1${NC}"
+            echo -e "${RED}[FAIL] Неизвестная команда: $1${NC}"
             echo ""
             show_help
             exit 1

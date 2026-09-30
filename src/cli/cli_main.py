@@ -185,7 +185,7 @@ def validate_command(args, language):
     sm = SafetyManager()
     if args.safety_level == "aggressive":
         warning = tm.translate("aggressive_mode_warning", language=language)
-        print(f"⚠️  {warning}")
+        print(f"[!] {warning}")
 
         if not sm.confirm_fix("VALIDATION", args.target, "HIGH"):
             logger.info(tm.translate("operation_cancelled", language=language))
@@ -197,10 +197,10 @@ def validate_command(args, language):
 
     # Show result
     if result["is_valid"]:
-        print(f"✅ {tm.translate('validation_success', language=language)}")
+        print(f"[OK] {tm.translate('validation_success', language=language)}")
         print(f"   {result['message']}")
     else:
-        print(f"❌ {tm.translate('validation_failed', language=language)}")
+        print(f"[FAIL] {tm.translate('validation_failed', language=language)}")
         print(f"   {result['message']}")
 
 
@@ -234,7 +234,7 @@ def scan_command(args, language):
 
     # Show result
     if result["success"]:
-        print(f"✅ {tm.translate('scan_complete', language=language)}")
+        print(f"[OK] {tm.translate('scan_complete', language=language)}")
         print(
             f"   {tm.translate('findings', language=language)}: {result['total_findings']}"
         )
@@ -245,7 +245,7 @@ def scan_command(args, language):
             emoji = sm.get_warning_emoji(sev)
             print(f"   {emoji} {sev}: {count}")
     else:
-        print(f"❌ {tm.translate('scan_failed', language=language)}")
+        print(f"[FAIL] {tm.translate('scan_failed', language=language)}")
         print(f"   {result.get('error', 'Unknown error')}")
 
 
@@ -266,7 +266,7 @@ def report_command(args, language):
 
     report_path = rg.generate_report(test_data, args.format, args.output)
 
-    print(f"✅ {tm.translate('report_generated', language=language)}")
+    print(f"[OK] {tm.translate('report_generated', language=language)}")
     print(f"   {report_path}")
 
 
@@ -274,7 +274,7 @@ def status_command(args, language):
     """Handle status command"""
     tm = TranslationManager()
 
-    print(f"📊 {tm.translate('system_status', language=language)}")
+    print(f" {tm.translate('system_status', language=language)}")
     print()
     print(f"   {tm.translate('app_name', language=language)}: {settings.app_name}")
     print(f"   {tm.translate('version', language=language)}: {settings.app_version}")
@@ -291,19 +291,19 @@ def list_command(args, language):
     tm = TranslationManager()
 
     if args.item == "scanners":
-        print(f"🔍 {tm.translate('available_scanners', language=language)}:")
+        print(f" {tm.translate('available_scanners', language=language)}:")
         for scanner in ScannerFactory.get_available_scanners():
             print(f"   - {scanner}")
 
     elif args.item == "tools":
         from src.tools.tool_factory import ToolFactory
 
-        print(f"🛠  {tm.translate('available_tools', language=language)}:")
+        print(f" {tm.translate('available_tools', language=language)}:")
         for tool in ToolFactory.get_available_tools():
             print(f"   - {tool}")
 
     elif args.item == "languages":
-        print(f"🌍 {tm.translate('available_languages', language=language)}:")
+        print(f" {tm.translate('available_languages', language=language)}:")
         tm_manager = TranslationManager()
         for lang in tm_manager.get_available_languages():
             print(f"   - {lang}")
@@ -326,7 +326,7 @@ def bot_scan_command(args, language):
 
     if result["success"]:
         passed = "PASSED" if result.get("passed", True) else "FAILED"
-        print(f"{'✅' if result.get('passed', True) else '❌'} Bot Security Scan [{passed}]")
+        print(f"{'[OK]' if result.get('passed', True) else '[FAIL]'} Bot Security Scan [{passed}]")
         print(f"   Platform: {result.get('platform', 'unknown')}")
         print(f"   Risk Score: {result.get('risk_score', 0):.1f}/100")
         print(f"   Total Findings: {result.get('total_findings', 0)}")
@@ -342,7 +342,7 @@ def bot_scan_command(args, language):
                 print(f"      Fix: {finding['recommendation']}")
             print()
     else:
-        print(f"❌ Scan failed: {result.get('error', 'Unknown error')}")
+        print(f"[FAIL] Scan failed: {result.get('error', 'Unknown error')}")
 
 
 def bot_audit_command(args, language):
@@ -358,7 +358,7 @@ def bot_audit_command(args, language):
         report = audit.generate_text_report(platform)
         if args.output:
             Path(args.output).write_text(report, encoding="utf-8")
-            print(f"✅ Text report saved to: {args.output}")
+            print(f"[OK] Text report saved to: {args.output}")
         else:
             print(report)
     else:
@@ -366,7 +366,7 @@ def bot_audit_command(args, language):
         if args.output:
             with open(args.output, "w", encoding="utf-8") as f:
                 json.dump(checklist, f, indent=2, ensure_ascii=False)
-            print(f"✅ Checklist saved to: {args.output}")
+            print(f"[OK] Checklist saved to: {args.output}")
         else:
             print(json.dumps(checklist, indent=2, ensure_ascii=False))
 
@@ -389,7 +389,7 @@ def bot_deploy_command(args, language):
         file_path.write_text(content, encoding="utf-8")
         print(f"  Created: {file_path}")
 
-    print("\n✅ Deployment templates generated in: %s" % output_dir)
+    print("\n[OK] Deployment templates generated in: %s" % output_dir)
     print("   Platform: %s" % platform.value)
     print("   Next steps:")
     print("     1. cd %s" % output_dir)

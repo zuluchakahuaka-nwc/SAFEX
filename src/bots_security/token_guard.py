@@ -28,7 +28,7 @@ PLATFORM_TOKEN_REGEX: Dict[PlatformType, List[Tuple[str, str, str]]] = {
         (
             r"\b(\d{8,10}:[A-Za-z0-9_-]{33,38})\b",
             "Telegram Bot API Token",
-            "Rotate via @BotFather → Revoke token",
+            "Rotate via @BotFather -> Revoke token",
         ),
         (
             r"\b(\d{8,10}[A-Za-z0-9_-]{33,38})\b",

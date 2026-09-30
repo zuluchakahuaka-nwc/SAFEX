@@ -20,7 +20,7 @@ def display_menu(language: str = "en"):
 
     print()
     print("=" * 60)
-    print(f"🛡️  {tm.translate('menu_title', language=language)}")
+    print(f" {tm.translate('menu_title', language=language)}")
     print("=" * 60)
     print()
     print("  1. " + tm.translate("menu_validate", language=language))
@@ -38,7 +38,7 @@ def display_language_menu():
     """Display language selection menu"""
     print()
     print("=" * 60)
-    print("🌍 Language / Язык / Idioma / Langue")
+    print(" Language / Язык / Idioma / Langue")
     print("=" * 60)
     print()
     print("  1. English")
@@ -65,9 +65,9 @@ def get_choice(prompt: str, max_choice: int) -> int:
             if 0 <= choice <= max_choice:
                 return choice
             else:
-                print(f"⚠️  Please enter a number between 0 and {max_choice}")
+                print(f"[!] Please enter a number between 0 and {max_choice}")
         except ValueError:
-            print("⚠️  Please enter a valid number")
+            print("[!] Please enter a valid number")
 
 
 def main():
@@ -79,31 +79,31 @@ def main():
         choice = get_choice("Enter your choice: ", 6)
 
         if choice == 0:
-            print("👋 Goodbye!")
+            print(" Goodbye!")
             break
         elif choice == 1:
             print(
-                f"\n🔍 {TranslationManager().translate('menu_validate', language=language)}"
+                f"\n {TranslationManager().translate('menu_validate', language=language)}"
             )
             print("   (Functionality coming soon)")
         elif choice == 2:
             print(
-                f"\n🔎 {TranslationManager().translate('menu_scan', language=language)}"
+                f"\n {TranslationManager().translate('menu_scan', language=language)}"
             )
             print("   (Functionality coming soon)")
         elif choice == 3:
             print(
-                f"\n📊 {TranslationManager().translate('menu_report', language=language)}"
+                f"\n {TranslationManager().translate('menu_report', language=language)}"
             )
             print("   (Functionality coming soon)")
         elif choice == 4:
             print(
-                f"\n📈 {TranslationManager().translate('menu_status', language=language)}"
+                f"\n {TranslationManager().translate('menu_status', language=language)}"
             )
             print("   (Functionality coming soon)")
         elif choice == 5:
             print(
-                f"\n⚙️  {TranslationManager().translate('menu_settings', language=language)}"
+                f"\n {TranslationManager().translate('menu_settings', language=language)}"
             )
             print("   (Functionality coming soon)")
         elif choice == 6:
@@ -125,14 +125,14 @@ def main():
 
             if lang_choice in lang_map:
                 language = lang_map[lang_choice]
-                print(f"✅ Language changed to: {language}")
+                print(f"[OK] Language changed to: {language}")
             else:
-                print("👋 Back to main menu")
+                print(" Back to main menu")
 
 
 if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        print("\n👋 Goodbye!")
+        print("\n Goodbye!")
         sys.exit(0)

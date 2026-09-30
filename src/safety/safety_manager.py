@@ -75,12 +75,12 @@ class SafetyManager:
 
     def get_warning_emoji(self, level: str) -> str:
         emoji_map = {
-            "LOW": "\U0001f7e2",
-            "MEDIUM": "\U0001f7e1",
-            "HIGH": "\U0001f534",
-            "CRITICAL": "\U0001f6a8",
+            "LOW": "[+] ",
+            "MEDIUM": "[!] ",
+            "HIGH": "[X] ",
+            "CRITICAL": "[!!] ",
         }
-        return emoji_map.get(level.upper(), "\u2753")
+        return emoji_map.get(level.upper(), "[?] ")
 
     def _get_timestamp(self) -> str:
         return datetime.now().isoformat()

@@ -1,6 +1,7 @@
 @echo off
+chcp 65001 >nul
 REM ═══════════════════════════════════════════════════════════
-REM 🐳 Запуск SAFEX + Тестовый сервер (Windows)
+REM Запуск SAFEX + Тестовый сервер (Windows)
 REM ═══════════════════════════════════════════════════════════
 
 setlocal enabledelayedexpansion
@@ -16,7 +17,7 @@ set "NC=[0m"
 echo.
 echo ╔════════════════════════════════════════════════════════╗
 echo ║                                                          ║
-echo ║           🐳 SAFEX + ТЕСТОВЫЙ СЕРВЕР               ║
+echo ║ SAFEX + ТЕСТОВЫЙ СЕРВЕР ║
 echo ║                                                          ║
 echo ╚════════════════════════════════════════════════════════╝
 echo.
@@ -42,7 +43,7 @@ echo   reports   - Показать отчеты сканирования
 echo   logs      - Показать логи SAFEX
 echo   status    - Показать статус контейнеров
 echo   stop      - Остановить контейнеры
-echo   clean     - 🗑️  Удалить все контейнеры и данные
+echo clean - Удалить все контейнеры и данные
 echo   help      - Показать эту справку
 echo.
 echo Примеры:
@@ -54,32 +55,32 @@ echo.
 goto end
 
 :up
-echo %BLUE%🚀 Запуск контейнеров...%NC%
+echo %BLUE% Запуск контейнеров...%NC%
 echo.
 docker-compose -f docker-compose.scan.yml up -d
 if %ERRORLEVEL% EQU 0 (
     echo.
-    echo %GREEN%✅ Контейнеры запущены!%NC%
+    echo %GREEN%[OK] Контейнеры запущены!%NC%
     echo.
-    echo 📦 Контейнеры:
-    echo    🔴 safex-scanner        - SAFEX (порт 8001)
-    echo    🎯 test-vulnerable-server - Тестовый сервер (порт 8081)
-    echo    🐘 safex-test-db         - PostgreSQL (порт 5433)
-    echo    🔴 safex-test-redis      - Redis (порт 6381)
+    echo Контейнеры:
+    echo [X] safex-scanner - SAFEX (порт 8001)
+    echo test-vulnerable-server - Тестовый сервер (порт 8081)
+    echo safex-test-db - PostgreSQL (порт 5433)
+    echo [X] safex-test-redis - Redis (порт 6381)
     echo.
-    echo 🌐 Доступные URL:
-    echo    📄 Тестовая страница: http://localhost:8081
-    echo    🔍 SAFEX API: http://localhost:8001
-    echo    📊 Отчеты: .\test-reports\
+    echo Доступные URL:
+    echo Тестовая страница: http://localhost:8081
+    echo SAFEX API: http://localhost:8001
+    echo Отчеты: .\test-reports\
     echo.
 ) else (
-    echo %RED%❌ Ошибка запуска контейнеров%NC%
+    echo %RED%[FAIL] Ошибка запуска контейнеров%NC%
     exit /b 1
 )
 goto end
 
 :scan
-echo %CYAN%🔍 Запуск сканирования...%NC%
+echo %CYAN% Запуск сканирования...%NC%
 echo.
 echo %BLUE%1. Запуск контейнеров...%NC%
 docker-compose -f docker-compose.scan.yml up -d
@@ -93,12 +94,12 @@ echo %CYAN%3. Сканирование HTML файла...%NC%
 docker exec safex-scanner python safex.py scan test-targets/index.html --language ru
 timeout /t 5 /nobreak >nul
 echo.
-echo %GREEN%✅ Сканирование завершено!%NC%
+echo %GREEN%[OK] Сканирование завершено!%NC%
 echo.
 goto end
 
 :reports
-echo %CYAN%📊 Отчеты сканирования:%NC%
+echo %CYAN% Отчеты сканирования:%NC%
 echo.
 echo Поиск отчетов в test-reports\...
 dir /B test-reports\*.json 2>nul
@@ -112,13 +113,13 @@ echo.
 goto end
 
 :logs
-echo %CYAN%📝 Логи SAFEX:%NC%
+echo %CYAN% Логи SAFEX:%NC%
 echo.
 docker logs safex-scanner
 goto end
 
 :status
-echo %CYAN%📊 Статус контейнеров:%NC%
+echo %CYAN% Статус контейнеров:%NC%
 echo.
 docker-compose -f docker-compose.scan.yml ps
 echo.
@@ -129,41 +130,41 @@ echo %YELLOW%⏹  Остановка контейнеров...%NC%
 echo.
 docker-compose -f docker-compose.scan.yml down
 if %ERRORLEVEL% EQU 0 (
-    echo %GREEN%✅ Контейнеры остановлены%NC%
+    echo %GREEN%[OK] Контейнеры остановлены%NC%
     echo.
 ) else (
-    echo %RED%❌ Ошибка остановки%NC%
+    echo %RED%[FAIL] Ошибка остановки%NC%
     exit /b 1
 )
 goto end
 
 :clean
 echo.
-echo %RED%🗑️  ОЧИСТКА ВСЕХ КОНТЕЙНЕРОВ И ДАННЫХ!%NC%
+echo %RED% ОЧИСТКА ВСЕХ КОНТЕЙНЕРОВ И ДАННЫХ!%NC%
 echo.
 set /p confirm="Вы уверены? (yes/no): "
 if /i "%confirm%"=="yes" (
-    echo %BLUE%ℹ️  Удаление контейнеров и данных...%NC%
+    echo %BLUE%ℹ Удаление контейнеров и данных...%NC%
     docker-compose -f docker-compose.scan.yml down -v
     
     REM Удалить отчеты
     if exist test-reports rmdir /s /q test-reports
     
     if %ERRORLEVEL% EQU 0 (
-        echo %GREEN%✅ Все удалено!%NC%
+        echo %GREEN%[OK] Все удалено!%NC%
         echo.
     ) else (
-        echo %RED%❌ Ошибка удаления%NC%
+        echo %RED%[FAIL] Ошибка удаления%NC%
         exit /b 1
     )
 ) else (
-    echo %BLUE%ℹ️  Отменено%NC%
+    echo %BLUE%ℹ Отменено%NC%
     echo.
 )
 goto end
 
 :unknown
-echo %RED%❌ Неизвестная команда: %1%NC%
+echo %RED%[FAIL] Неизвестная команда: %1%NC%
 echo.
 goto help
 

@@ -1,4 +1,5 @@
 @echo off
+chcp 65001 >nul
 REM ═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 setlocal enabledelayedexpansion
 
@@ -13,7 +14,7 @@ set "NC=[0m"
 echo.
 echo ╔════════════════════════════════════════════════════════════╗
 echo ║                                                          ║
-echo ║     🐳 SAFEX + ТЕСТОВЫЙ СЕРВЕР            ║
+echo ║ SAFEX + ТЕСТОВЫЙ СЕРВЕР ║
 echo ║     SAFEX будет сканировать уязвимости ║
 echo ║                                                          ║
 echo ╚══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
@@ -51,36 +52,36 @@ echo.
 echo.
 echo ══════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
 echo ║                                                          ║
-echo ║        🚀 Запуск контейнеров                       ║
+echo ║ Запуск контейнеров ║
 echo ║                                                          ║
 echo ╚═════════════════════════════════════════════════════════════════╝
 echo.
 
-echo %BLUE%🔴 Запуск тестового сервера...%NC%
+echo %BLUE%[X] Запуск тестового сервера...%NC%
 docker run -d --name test-vulnerable-server ^
     -p 8081:80 ^
-    -v D:\Projects\SAFEXerver\test-targets:/usr/share/nginx/html:ro ^
+    -v %~dp0test-targets:/usr/share/nginx/html:ro ^
     nginx:alpine
 
 if %ERRORLEVEL% NEQ 0 (
-    echo %GREEN%✅ Тестовый сервер запущен!%NC%
+    echo %GREEN%[OK] Тестовый сервер запущен!%NC%
     echo.
-    echo %CYAN%🌐 Доступные URL:%NC%
-    echo    🔴 Тестовая страница: http://localhost:8081/
-    echo    🔍 SAFEX API: http://localhost:8001/
+    echo %CYAN% Доступные URL:%NC%
+    echo [X] Тестовая страница: http://localhost:8081/
+    echo SAFEX API: http://localhost:8001/
     echo.
-    echo %YELLOW%📄 Уязвимости для теста:%NC%
+    echo %YELLOW% Уязвимости для теста:%NC%
     echo    1. Открой: http://localhost:8081/
     echo    2. Попробуй пароль: SuperSecretPassword123
     echo    3. Нажми "Test XSS" (XSS!)
     echo    4. Проверь консоль браузера (F12)
     echo.
-    echo %BLUE%📋 Что SAFEX найдет:%NC%
-    echo    1. 🔴 3 уязвимости CRITICAL (hardcoded password, exposed API key)
-    echo    2. 🟠 3 уязвимости HIGH (SQL injection, XSS, weak crypto)
-    echo    3. 🟡 2 уязвимости MEDIUM (insecure deserialization, file permissions)
+    echo %BLUE% Что SAFEX найдет:%NC%
+    echo 1. [X] 3 уязвимости CRITICAL (hardcoded password, exposed API key)
+    echo 2. 3 уязвимости HIGH (SQL injection, XSS, weak crypto)
+    echo 3. [!] 2 уязвимости MEDIUM (insecure deserialization, file permissions)
 ) else (
-    echo %RED%❌ Ошибка запуска тестового сервера!%NC%
+    echo %RED%[FAIL] Ошибка запуска тестового сервера!%NC%
     echo.
     echo Проверьте порт 8081:
     netstat -ano | findstr ":8081"
@@ -93,18 +94,18 @@ goto end
 echo.
 echo ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
 echo ║                                                          ║
-echo ║        🏹 Остановка контейнеров                     ║
+echo ║ Остановка контейнеров ║
 echo ║                                                          ║
 echo ╚═════════════════════════════════════════════════════════════╝
 echo.
 
-echo %BLUE%🔴 Остановка тестового сервера...%NC%
+echo %BLUE%[X] Остановка тестового сервера...%NC%
 docker stop test-vulnerable-server 2>nul
 
 if %ERRORLEVEL% EQU 0 (
-    echo %GREEN%✅ Тестовый сервер остановлен!%NC%
+    echo %GREEN%[OK] Тестовый сервер остановлен!%NC%
 ) else (
-    echo %RED%❌ Ошибка остановки%NC%
+    echo %RED%[FAIL] Ошибка остановки%NC%
 )
 
 goto end
@@ -113,28 +114,28 @@ goto end
 echo.
 echo ══════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
 echo ║                                                          ║
-echo ║        🚀 Запуск и открытие теста               ║
+echo ║ Запуск и открытие теста ║
 echo ║                                                          ║
 echo ╚═════════════════════════════════════════════════════════╝
 echo.
 
-echo %BLUE%1️⃣ Запуск контейнеров...%NC%
+echo %BLUE%1 Запуск контейнеров...%NC%
 docker run -d --name test-vulnerable-server ^
     -p 8081:80 ^
-    -v D:\Projects\SAFEXerver\test-targets:/usr/share/nginx/html:ro ^
+    -v %~dp0test-targets:/usr/share/nginx/html:ro ^
     nginx:alpine
 
 timeout /t 3 /nobreak >nul
 
 if %ERRORLEVEL% EQU 0 (
-    echo %GREEN%✅ Контейнеры запущены!%NC%
+    echo %GREEN%[OK] Контейнеры запущены!%NC%
     echo.
-    echo %CYAN%🌐 Доступные URL:%NC%
+    echo %CYAN% Доступные URL:%NC%
     echo.
-    echo 🔴 Тестовая страница: http://localhost:8081/
-    echo 🔍 SAFEX API: http://localhost:8001/
+    echo [X] Тестовая страница: http://localhost:8081/
+    echo SAFEX API: http://localhost:8001/
     echo.
-    echo %YELLOW%📄 Открыть тестовую страницу?%NC%
+    echo %YELLOW% Открыть тестовую страницу?%NC%
     echo   - Да: Открой в браузере
     echo   - Нет: Нажми Enter
     echo.
@@ -143,32 +144,32 @@ if %ERRORLEVEL% EQU 0 (
     set /p "open_choice="
     
     if /i "%open_page%"=="yes" (
-        echo %BLUE%🌐 Открываю тестовую страницу...%NC%
+        echo %BLUE% Открываю тестовую страницу...%NC%
         start "" http://localhost:8081/
     ) else (
-        echo %YELLOW%📋 Пропускаю...%NC%
+        echo %YELLOW% Пропускаю...%NC%
     )
     
     echo.
-    echo %GREEN%✅ Тестовый сервер готов!%NC%
+    echo %GREEN%[OK] Тестовый сервер готов!%NC%
     echo.
-    echo %CYAN%📊 SAFEX готов к сканированию!%NC%
+    echo %CYAN% SAFEX готов к сканированию!%NC%
     echo.
-    echo %YELLOW%💡 Команда для сканирования:%NC%
+    echo %YELLOW% Команда для сканирования:%NC%
     echo   .\start.bat scan
     echo.
-    echo %CYAN%📊 Открыть SAFEX CLI:%NC%
+    echo %CYAN% Открыть SAFEX CLI:%NC%
     echo   .\start.bat safex
     echo.
-    echo %CYAN%💡 Показать справку SAFEX:%NC%
+    echo %CYAN% Показать справку SAFEX:%NC%
     echo   .\start.bat safex help
     echo.
-    echo %RED%⚠️  ВАЖНО: Не используйте тестовую среду в продакшене!%NC%
+    echo %RED%[!] ВАЖНО: Не используйте тестовую среду в продакшене!%NC%
     echo.
-    echo %YELLOW%💾 Установить пакеты Python:%NC%
+    echo %YELLOW% Установить пакеты Python:%NC%
     echo   pip install -r requirements.txt
 ) else (
-    echo %RED%❌ Ошибка запуска контейнеров!%NC%
+    echo %RED%[FAIL] Ошибка запуска контейнеров!%NC%
     echo.
     docker ps -a | findstr "test-vulnerable-server"
 )
@@ -179,22 +180,22 @@ goto end
 echo.
 echo ══════════════════════════════════════════════════════════════════════════════════════╗
 echo ║                                                          ║
-echo ║        🔍 Сканирование тестового сервера SAFEX            ║
+echo ║ Сканирование тестового сервера SAFEX ║
 echo ║                                                          ║
 echo ╚═══════════════════════════════════════════════════════════════╝
 echo.
 
-echo %BLUE%🔴 Запуск SAFEX сканирования...%NC%
+echo %BLUE%[X] Запуск SAFEX сканирования...%NC%
 docker run -it --rm ^
-    -v D:\Projects\SAFEXerver\test-targets:/app ^
+    -v %~dp0test-targets:/app ^
     python safex.py scan test-targets/index.html ^
     --safety-level safe ^
     --language ru
 
 echo.
-echo %GREEN%✅ Сканирование завершено!%NC%
+echo %GREEN%[OK] Сканирование завершено!%NC%
 echo.
-echo %CYAN%📊 Результаты сохранены в: D:\Projects\SAFEXerver\test-reports\%NC%
+echo %CYAN% Результаты сохранены в: %~dp0test-reports\%NC%
 
 goto end
 
@@ -202,19 +203,19 @@ goto end
 echo.
 echo ════════════════════════════════════════════════════════╗
 echo ║                                                          ║
-echo ║          📊 Статус контейнеров                      ║
+echo ║ Статус контейнеров ║
 echo ║                                                          ║
 echo ╚═══════════════════════════════════════════════════════╝
 echo.
 
-echo %BLUE%🔴 Проверка контейнеров...%NC%
+echo %BLUE%[X] Проверка контейнеров...%NC%
 echo.
 echo Контейнеры Docker:
 docker ps -a | findstr "safex\|test-vulnerable"
 echo.
 
 echo.
-echo %CYAN%📊 Статус портов:%NC%
+echo %CYAN% Статус портов:%NC%
 echo.
 echo Тестовый сервер (порт 8081):
 netstat -ano | findstr ":8081"
@@ -229,16 +230,16 @@ goto end
 echo.
 echo ══════════════════════════════════════════════════════════════════════════════════════════════╗
 echo ║                                                          ║
-echo ║          📝 Логи контейнеров                           ║
+echo ║ Логи контейнеров ║
 echo ║                                                          ║
 echo ╚═══════════════════════════════════════════════════════════════╝
 echo.
 
-echo %BLUE%📋 Логи тестового сервера:%NC%
+echo %BLUE% Логи тестового сервера:%NC%
 docker logs test-vulnerable-server --tail 50
 echo.
 echo.
-echo %CYAN%📋 Логи SAFEX:%NC%
+echo %CYAN% Логи SAFEX:%NC%
 docker logs test-safex-scanner --tail 50
 
 goto end
@@ -247,31 +248,31 @@ goto end
 echo.
 echo ══════════════════════════════════════════════════════╗
 echo ║                                                          ║
-echo ║          🎯 Открыть тестовый файл с уязвимостями      ║
+echo ║ Открыть тестовый файл с уязвимостями ║
 echo ║                                                          ║
 echo ╚═══════════════════════════════════════════════╝
 echo.
 
-echo %YELLOW%📂 Тестовый файл: D:\Projects\SAFEXerver\test-targets\index.html%NC%
+echo %YELLOW% Тестовый файл: %~dp0test-targets\index.html%NC%
 echo.
-echo %CYAN%🔴 Python файл: D:\Projects\SAFEXerver\test-targets\vulnerable_app.py%NC%
+echo %CYAN%[X] Python файл: %~dp0test-targets\vulnerable_app.py%NC%
 echo.
 echo.
-echo %BLUE%🚀 Запуск тестовой страницы...%NC%
+echo %BLUE% Запуск тестовой страницы...%NC%
 start "" http://localhost:8081
 
 echo.
-echo %YELLOW%📝 Что проверить:%NC%
+echo %YELLOW% Что проверить:%NC%
 echo.
-echo 🔴 Попробуй пароль: SuperSecretPassword123
-echo 🟠 Нажми "Test XSS"
-echo 🟠 Проверь консоль браузера (F12)
-echo 🔴 Попробуй SQL Injection: 1; DROP TABLE users;--
-echo 🟠 Проверь API key в консоли (F12)
+echo [X] Попробуй пароль: SuperSecretPassword123
+echo Нажми "Test XSS"
+echo Проверь консоль браузера (F12)
+echo [X] Попробуй SQL Injection: 1; DROP TABLE users;--
+echo Проверь API key в консоли (F12)
 echo.
 
 echo.
-echo %GREEN%✅ Тестовая страница открыта в браузере!%NC%
+echo %GREEN%[OK] Тестовая страница открыта в браузере!%NC%
 echo.
 
 goto end
@@ -280,54 +281,54 @@ goto end
 echo.
 echo ══════════════════════════════════════════════════════════════════════╗
 echo ║                                                          ║
-echo ║          🔍 SAFEX команды                        ║
+echo ║ SAFEX команды ║
 echo ║                                                          ║
 echo ╚═══════════════════════════════════════════╝
 echo.
 
-echo %CYAN%📋 Доступные команды SAFEX:%NC%
+echo %CYAN% Доступные команды SAFEX:%NC%
 echo.
 echo ╔═══════════════════════════════════════════════════════════════════════╗
 echo.
-echo  📄 Команды валидации:
+echo Команды валидации:
 echo    python safex.py validate <path> [--method <method>] [--language <ru>]
 echo.
 echo.
-echo 🔍 Команды сканирования:
+echo Команды сканирования:
 echo    python safex.py scan <path> [--scanner <scanner>] [--safety-level <level>] [--language <ru>]
 echo.
 echo.
-echo 📊 Команды отчетов:
+echo Команды отчетов:
 echo    python safex.py report --format <json|html|markdown|csv> [--output <path>]
 echo.
 echo.
-echo 📈 Команды статуса:
+echo Команды статуса:
 echo    python safex.py status
 echo.
 echo.
-echo 📋 Команды списков:
+echo Команды списков:
 echo    python safex.py list scanners
 echo    python safex list tools
 echo.
 echo.
 echo ══════════════════════════════════════════════════════════════════╝
 echo.
-echo 🔒 Safety Levels:
-echo    🔍 discovery - Read-only (без изменений)
-echo    🛡 safe - Безопасные изменения
-echo    🟠 moderate - С предупреждениями
-echo    🔴 aggressive - Все изменения
+echo Safety Levels:
+echo discovery - Read-only (без изменений)
+echo safe - Безопасные изменения
+echo moderate - С предупреждениями
+echo [X] aggressive - Все изменения
 echo.
 echo.
 echo ════════════════════════════════════════════════════════════╝
 echo.
-echo 🌍 Поддерживаемые языки:
-echo    🇬🇷 English, 🇪🇪, 🇫🇫, 🇩🇪, 🇨🇨🇦, 🇯🇵, 🇸🇸, 🇹🇹, 🇮🇮, 🇹🇰, 🇧🇷
+echo Поддерживаемые языки:
+echo English, , , , , , , , , ,
 echo.
 echo.
 echo ╔═════════════════════════════════════════════════════════╝
 echo.
-echo 💡 Быстрый старт:
+echo Быстрый старт:
 echo    python safex.py --help
 echo.
 
@@ -335,7 +336,7 @@ echo.
 goto end
 
 :unknown
-echo %RED%❌ Неизвестная команда: %1%NC%
+echo %RED%[FAIL] Неизвестная команда: %1%NC%
 echo.
 echo.
 goto help

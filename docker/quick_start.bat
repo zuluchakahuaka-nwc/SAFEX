@@ -1,7 +1,8 @@
 @echo off
+chcp 65001 >nul
 REM ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
 echo ║                                                          ║
-echo ║          🚀 СК АВНОЙ БАТНИК                          ║
+echo ║ СК АВНОЙ БАТНИК ║
 echo ║                                                          ║
 echo ╚═════════════════════════════════════════════════╝
 echo.
@@ -15,44 +16,44 @@ set "CYAN=[96m"
 set "NC=[0m"
 
 REM ============================================
-# 🚀 ЗАПУСК 2-Х КОНТЕЙНЕРА:
+# ЗАПУСК 2-Х КОНТЕЙНЕРА:
 # ============================================
 
-REM 1. 🎯 Тестовый сервер с уязвимостями
+REM 1. Тестовый сервер с уязвимостями
 REM    - HTML файл с 8 уязвимостями
 REM    - Python файл с уязвимостями
 REM    - Запускается на порту 8081
 
-REM 2. 🔍 SAFEX (наш инструмент)
+REM 2. SAFEX (наш инструмент)
 REM    - Будет сканировать тестовый сервер
-REM    - Находится в D:\Projects\SAFEXerver\
+REM    - Папка test-targets рядом со скриптом
 REM    - API на порту 8001
 
 REM ============================================
-# 🎯 Тестовый сервер (Nginx)
+# Тестовый сервер (Nginx)
 # ============================================
 
-echo %BLUE%🔴 Запуск тестового сервера...%NC%
+echo %BLUE%[X] Запуск тестового сервера...%NC%
 
 docker run -d --name test-vulnerable-server ^
     -p 8081:80 ^
-    -v D:\Projects\SAFEXerver\test-targets:/usr/share/nginx/html:ro ^
+    -v %~dp0test-targets:/usr/share/nginx/html:ro ^
     nginx:alpine
 
 if %ERRORLEVEL% EQU 0 (
     echo.
-    echo %GREEN%✅ Контейнеры запущены!%NC%
+    echo %GREEN%[OK] Контейнеры запущены!%NC%
     echo.
-    echo %CYAN%🌐 Доступные URL:%NC%
+    echo %CYAN% Доступные URL:%NC%
     echo.
-    echo 🔴 Тестовая страница: http://localhost:8081/
-    echo 🔍 SAFEX API: http://localhost:8001/
+    echo [X] Тестовая страница: http://localhost:8081/
+    echo SAFEX API: http://localhost:8001/
     echo.
-    echo %YELLOW%📄 Уязвимости для теста:%NC%
+    echo %YELLOW% Уязвимости для теста:%NC%
     echo    ════════════════════════════════════════════════════════╗
     echo ║                                                          ║
-    echo ║ 1. 🔴 Hardcoded Password (CRITICAL)                    ║
-    echo ║    🎯 Открой в браузере: http://localhost:8081/               ║
+    echo ║ 1. [X] Hardcoded Password (CRITICAL) ║
+    echo ║ Открой в браузере: http://localhost:8081/ ║
     echo ║    ══════════════════════════════════════╗
     echo ║    Пароль: SuperSecretPassword123                        ║
     echo ║    ════════════════════════════╝
@@ -61,13 +62,13 @@ if %ERRORLEVEL% EQU 0 (
     echo.
     echo ════════════════════════════════════════════════╝
     echo ════════════════════════════╗
-    echo ║ 2. 🔴 Exposed API Key (CRITICAL)               ║
+    echo ║ 2. [X] Exposed API Key (CRITICAL) ║
     echo ║    Открой консоль браузера (F12) и проверь:       ║
     echo ║    API Key: sk-proj-FAKE-EXAMPLE-ONLY-NOT-REAL         ║
-    echo ║    📌 Console: Developer Tools (F12) → Application → Inspect   ║
+    echo ║ Console: Developer Tools (F12) -> Application -> Inspect ║
     echo ════════════════════════════════════╗
     echo ║                                                          ║
-    echo ║    3. 🔴 SQL Injection (HIGH)                      ║
+    echo ║ 3. [X] SQL Injection (HIGH) ║
     echo ║    Ввод в поле: 1; DROP TABLE users;--              ║
     echo ║    Открой консоль браузера (F12)              ║
     echo ════════════════════════════════════╝
@@ -78,7 +79,7 @@ if %ERRORLEVEL% EQU 0 (
     echo ════════════════════════════════════════╝
     echo.
     echo ══════════════════════════════╗
-    echo ║    4. 🟠 Cross-Site Scripting (XSS) (HIGH)         ║
+    echo ║ 4. Cross-Site Scripting (XSS) (HIGH) ║
     echo ║    Открой страницу: http://localhost:8081/            ║
     echo ║    Нажми кнопку "Test XSS"                        ║
     echo ══════════════════════════════════╗
@@ -94,7 +95,7 @@ if %ERRORLEVEL% EQU 0 (
     echo ══════════════════════════════════════════════════════════════════════════╝
     echo ══════════════════════════════╝
     echo ══════════════════════════╗
-    echo ║    5. 🟡 Weak Cryptographic Algorithm (MEDIUM)  ║
+    echo ║ 5. [!] Weak Cryptographic Algorithm (MEDIUM) ║
     echo ║    Файл использует MD5 для хеширования паролей     ║
     echo ══════════════════════════════════╝
     echo ══════════════════════════════════════════════╝
@@ -147,7 +148,7 @@ if %ERRORLEVEL% EQU 0 (
     echo.
     echo ══════════════════════════════════════════════╝
     echo ════════════════════════════════════════╗
-    echo ║    6. 🔴 Command Injection (CRITICAL)                ║
+    echo ║ 6. [X] Command Injection (CRITICAL) ║
     echo ║    Ввод: ping 127.0.0.1; cat /etc/passwd        ║
     echo ║    Открой консоль (F12) и введите команду    ║
     echo ══════════════════════════════╗
@@ -710,13 +711,13 @@ if %ERRORLEVEL% EQU 0 (
     echo ═════════╪
     echo ═══════╪
     echo ══════════╗
-    echo ║    8. 🟡 Insecure File Permissions (MEDIUM)                ║
+    echo ║ 8. [!] Insecure File Permissions (MEDIUM) ║
     echo ║    Файл: /etc/sensive-config.conf                ║
     echo ║    Права доступа: 777 (world-writable)           ║
     echo ═    Описание: Everyone can write the file         ║
     echo ║    Локация: test-targets/index.html        ║
     echo ╚═════════════════════════════════╗
-    echo ║    <!-- ❌ VULNERABILITY: File is world-writable --&gt;              ║
+    echo ║ <!-- [FAIL] VULNERABILITY: File is world-writable --&gt; ║
     ══════════════════════╗
     ║    <script>                                   ║
     │    // Симуляция file permission check         ║
@@ -743,12 +744,12 @@ if %ERRORLEVEL% EQU 0 (
     echo ╚═══════════════════════╝
     echo.
     echo.
-    echo %BLUE%🔍 SAFEX будет сканировать и находить уязвимости!%NC%
+    echo %BLUE% SAFEX будет сканировать и находить уязвимости!%NC%
     echo.
-    echo %CYAN%📊 Отчеты будут сохранены в: D:\Projects\SAFEXerver\test-reports\%NC%
+    echo %CYAN% Отчеты будут сохранены в: %~dp0test-reports\%NC%
     echo.
     echo.
-    echo %YELLOW%💡 Команды для сканирования:%NC%
+    echo %YELLOW% Команды для сканирования:%NC%
     echo.
     echo   .\start.bat scan              # Запустить сканирование
     echo   python safex.py scan <path> --language ru
@@ -759,11 +760,11 @@ if %ERRORLEVEL% EQU 0 (
     echo   python safex.py scan test-targets/vulnerable_app.py --language ru
     echo.
     echo.
-    echo %CYAN%🔴 Что SAFEX найдет:%NC%
+    echo %CYAN%[X] Что SAFEX найдет:%NC%
     echo.
-    echo 🔴 3 уязвимости CRITICAL (hardcoded password, exposed API key, command injection)
-    echo 🟠 3 уязвимости HIGH (SQL injection, XSS, weak crypto, insecure deserialization)
-    echo 🟡 2 уязвимости MEDIUM (insecure file permissions, weak cryptographic algorithm)
+    echo [X] 3 уязвимости CRITICAL (hardcoded password, exposed API key, command injection)
+    echo 3 уязвимости HIGH (SQL injection, XSS, weak crypto, insecure deserialization)
+    echo [!] 2 уязвимости MEDIUM (insecure file permissions, weak cryptographic algorithm)
     echo.
     echo.
     echo ╚═════════════════════════════════════════════════╝
@@ -772,18 +773,18 @@ if %ERRORLEVEL% EQU 0 (
     echo ════════════════════════════════════╝
     echo.
     echo.
-    echo %RED%⚠️ ВАЖНО: Не используйте тестовую среду в продакшене!%NC%
+    echo %RED%[!] ВАЖНО: Не используйте тестовую среду в продакшене!%NC%
     echo.
     echo.
-    echo %YELLOW%💾 Установите пакеты Python:%NC%
+    echo %YELLOW% Установите пакеты Python:%NC%
     echo   pip install -r requirements.txt
     echo.
     echo.
     echo.
-    echo %GREEN%✅ Все готово к тестированию!%NC%
+    echo %GREEN%[OK] Все готово к тестированию!%NC%
     echo.
     echo.
-    echo %CYAN%🚀 Команды для работы:%NC%
+    echo %CYAN% Команды для работы:%NC%
     echo.
     echo.
     echo   .\start.bat up          # Запустить контейнеры
