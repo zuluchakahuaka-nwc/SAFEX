@@ -20,7 +20,11 @@ class CodeScanner(BaseScanner):
         self.supported_languages = {
             ".py": "python",
             ".js": "javascript",
+            ".jsx": "javascript",
+            ".mjs": "javascript",
+            ".cjs": "javascript",
             ".ts": "typescript",
+            ".tsx": "typescript",
             ".java": "java",
             ".c": "c",
             ".cpp": "cpp",
