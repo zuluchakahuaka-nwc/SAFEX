@@ -126,5 +126,236 @@
       }
     ],
     "verification": "Verify that secret is rotated and no longer exposed"
+  },
+  "DEP-001": {
+    "vulnerability_id": "DEP-001",
+    "steps": [
+      {
+        "type": "command",
+        "description": "Upgrade aiohttp to a patched release",
+        "command": "pip install 'aiohttp>=3.14.4'"
+      }
+    ],
+    "verification": "pip show aiohttp | grep Version"
+  },
+  "DEP-002": {
+    "vulnerability_id": "DEP-002",
+    "steps": [
+      {
+        "type": "command",
+        "description": "Upgrade python-multipart",
+        "command": "pip install 'python-multipart>=0.0.31'"
+      }
+    ],
+    "verification": "pip show python-multipart | grep Version"
+  },
+  "DEP-003": {
+    "vulnerability_id": "DEP-003",
+    "steps": [
+      {
+        "type": "command",
+        "description": "Upgrade jinja2",
+        "command": "pip install 'jinja2>=3.1.6'"
+      }
+    ],
+    "verification": "pip show jinja2 | grep Version"
+  },
+  "DEP-004": {
+    "vulnerability_id": "DEP-004",
+    "steps": [
+      {
+        "type": "command",
+        "description": "Upgrade requests",
+        "command": "pip install 'requests>=2.33.0'"
+      }
+    ],
+    "verification": "pip show requests | grep Version"
+  },
+  "DEP-005": {
+    "vulnerability_id": "DEP-005",
+    "steps": [
+      {
+        "type": "command",
+        "description": "Upgrade starlette together with fastapi (fastapi 0.109 pins starlette < 0.37)",
+        "command": "pip install 'fastapi>=0.162.0' 'starlette>=1.3.1'"
+      }
+    ],
+    "verification": "pip show starlette | grep Version"
+  },
+  "DEP-006": {
+    "vulnerability_id": "DEP-006",
+    "steps": [
+      {
+        "type": "command",
+        "description": "Upgrade fastapi",
+        "command": "pip install 'fastapi>=0.109.1'"
+      }
+    ],
+    "verification": "pip show fastapi | grep Version"
+  },
+  "DEP-007": {
+    "vulnerability_id": "DEP-007",
+    "steps": [
+      {
+        "type": "command",
+        "description": "Replace unmaintained python-jose with pyjwt (no upstream fix for CVE-2026-85394)",
+        "command": "pip uninstall python-jose && pip install pyjwt"
+      }
+    ],
+    "verification": "grep -r jose requirements.txt src/ returns nothing; pyjwt used with explicitly allowed algorithms"
+  },
+  "DEP-008": {
+    "vulnerability_id": "DEP-008",
+    "steps": [
+      {
+        "type": "command",
+        "description": "Upgrade next.js and redeploy",
+        "command": "pnpm add 'next@>=16.4.1' && pnpm build"
+      }
+    ],
+    "verification": "grep version node_modules/next/package.json shows >= 16.4.1; container image rebuilt"
+  },
+  "DEP-009": {
+    "vulnerability_id": "DEP-009",
+    "steps": [
+      {
+        "type": "command",
+        "description": "Upgrade next.js",
+        "command": "pnpm add 'next@>=16.3.8' && pnpm build"
+      }
+    ],
+    "verification": "grep version node_modules/next/package.json"
+  },
+  "DEP-010": {
+    "vulnerability_id": "DEP-010",
+    "steps": [
+      {
+        "type": "command",
+        "description": "Upgrade next.js",
+        "command": "pnpm add 'next@>=16.3.3' && pnpm build"
+      }
+    ],
+    "verification": "grep version node_modules/next/package.json"
+  },
+  "DEP-011": {
+    "vulnerability_id": "DEP-011",
+    "steps": [
+      {
+        "type": "command",
+        "description": "Upgrade drizzle-orm and audit raw SQL usage",
+        "command": "pnpm add 'drizzle-orm@>=0.45.2'"
+      }
+    ],
+    "verification": "grep version node_modules/drizzle-orm/package.json; code search for sql.raw shows no dynamic identifiers"
+  },
+  "DEP-012": {
+    "vulnerability_id": "DEP-012",
+    "steps": [
+      {
+        "type": "command",
+        "description": "Upgrade zod",
+        "command": "pnpm add 'zod@>=4.6.6'"
+      }
+    ],
+    "verification": "grep version node_modules/zod/package.json; request body size limits enforced before validation"
+  },
+  "DEP-013": {
+    "vulnerability_id": "DEP-013",
+    "steps": [
+      {
+        "type": "command",
+        "description": "Upgrade nanoid on the affected major line",
+        "command": "pnpm add 'nanoid@>=5.1.16'"
+      }
+    ],
+    "verification": "grep version node_modules/nanoid/package.json; size argument validated as positive integer"
+  },
+  "WEB-001": {
+    "vulnerability_id": "WEB-001",
+    "steps": [
+      {
+        "type": "command",
+        "description": "Upgrade nginx (or verify distro backport, then disable session tickets if blocked)",
+        "command": "apt-get update && apt-get install --only-upgrade nginx"
+      }
+    ],
+    "verification": "nginx -v; zgrep -i CVE-2026-97629 /usr/share/doc/nginx*/changelog.Debian.gz"
+  },
+  "WEB-002": {
+    "vulnerability_id": "WEB-002",
+    "steps": [
+      {
+        "type": "command",
+        "description": "Upgrade nginx",
+        "command": "apt-get update && apt-get install --only-upgrade nginx"
+      }
+    ],
+    "verification": "nginx -v; check distro changelog for CVE-2026-42926 backport"
+  },
+  "WEB-003": {
+    "vulnerability_id": "WEB-003",
+    "steps": [
+      {
+        "type": "command",
+        "description": "Upgrade nginx",
+        "command": "apt-get update && apt-get install --only-upgrade nginx"
+      }
+    ],
+    "verification": "nginx -v; check distro changelog for CVE-2026-42533 backport"
+  },
+  "WEB-004": {
+    "vulnerability_id": "WEB-004",
+    "steps": [
+      {
+        "type": "command",
+        "description": "Upgrade nginx; disable HTTP/3 if unused",
+        "command": "apt-get update && apt-get install --only-upgrade nginx"
+      }
+    ],
+    "verification": "nginx -v; config has no listen ... http3 unless required"
+  },
+  "WEB-005": {
+    "vulnerability_id": "WEB-005",
+    "steps": [
+      {
+        "type": "command",
+        "description": "Upgrade nginx",
+        "command": "apt-get update && apt-get install --only-upgrade nginx"
+      }
+    ],
+    "verification": "nginx -v; check distro changelog for CVE-2026-28755 backport"
+  },
+  "WEB-006": {
+    "vulnerability_id": "WEB-006",
+    "steps": [
+      {
+        "type": "command",
+        "description": "Upgrade nginx",
+        "command": "apt-get update && apt-get install --only-upgrade nginx"
+      }
+    ],
+    "verification": "nginx -v; check distro changelog for CVE-2026-1642 backport"
+  },
+  "WEB-007": {
+    "vulnerability_id": "WEB-007",
+    "steps": [
+      {
+        "type": "command",
+        "description": "Upgrade nginx; remove slice usage if unneeded",
+        "command": "apt-get update && apt-get install --only-upgrade nginx"
+      }
+    ],
+    "verification": "nginx -v; grep -r slice /etc/nginx/ returns nothing unexpected"
+  },
+  "WEB-008": {
+    "vulnerability_id": "WEB-008",
+    "steps": [
+      {
+        "type": "command",
+        "description": "Upgrade nginx",
+        "command": "apt-get update && apt-get install --only-upgrade nginx"
+      }
+    ],
+    "verification": "nginx -v; check distro changelog for CVE-2026-9256 / CVE-2026-42945 / CVE-2026-56434 / CVE-2026-15176 backports"
   }
 }

@@ -1,16 +1,19 @@
 # Core dependencies
-fastapi==0.109.0
-uvicorn[standard]==0.27.0
-pydantic==2.5.3
-pydantic-settings==2.1.0
+fastapi==0.162.0
+starlette==1.10.0
+uvicorn[standard]==0.54.0
+pydantic==2.14.2
+pydantic-settings==2.16.2
 
 # Database
 sqlalchemy==2.0.25
-psycopg2-binary==2.9.9
+# PostgreSQL driver: optional at runtime (SQLAlchemy connects lazily; scanners do not need a DB).
+# No Windows cp313 wheels available — on Windows install with --no-deps or skip; Linux/podman builds are unaffected.
+psycopg2-binary==2.9.13
 alembic==1.13.1
 
 # Async
-aiohttp==3.9.1
+aiohttp==3.14.5
 httpx==0.26.0
 
 # Task Queue
@@ -21,7 +24,7 @@ redis==5.0.1
 python-nmap==0.7.1
 
 # Reporting
-jinja2==3.1.3
+jinja2==3.1.6
 reportlab==4.0.8
 pdfkit==1.0.0
 weasyprint==60.2
@@ -34,9 +37,9 @@ jsonschema==4.21.1
 emails==0.6
 
 # Authentication
-python-jose[cryptography]==3.3.0
+# python-jose removed 2026-10: CVE-2026-85394 (critical) has no upstream fix <= 3.5.0; use pyjwt if JWT is ever needed
 passlib[bcrypt]==1.7.4
-python-multipart==0.0.9
+python-multipart==0.0.32
 
 # TUI
 urwid==2.6.14
@@ -51,7 +54,7 @@ psutil==5.9.8
 # Utilities
 python-dotenv==1.0.0
 click==8.1.7
-requests==2.31.0
+requests==2.34.2
 tenacity==8.2.3
 
 # Docker

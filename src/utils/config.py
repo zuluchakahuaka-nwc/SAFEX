@@ -5,7 +5,7 @@ Configuration management for SAFEX
 import os
 from pathlib import Path
 from typing import Dict, List
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import Field
 
 
@@ -107,9 +107,10 @@ class Settings(BaseSettings):
     rate_limit_period: int = 3600
     rate_limit_requests_per_second: int = 1
 
-    class Config:
-        env_file = ".env"
-        case_sensitive = False
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        case_sensitive=False,
+    )
 
 
 # Global settings instance
